@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#b5122b">
 <title>FindBlood | Dharanji</title>
+<!-- Supabase JS Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --red: #b5122b;
@@ -29,6 +31,11 @@ nav a { color: #333; text-decoration: none; font-size: 14px; font-weight: 600; }
 nav a:hover { color: var(--red); }
 .emergency-badge-btn { background: #fee2e2; color: var(--red); padding: 8px 16px; border-radius: 20px; font-weight: 800; border: 1.5px solid var(--red); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(181, 18, 43, 0.15); }
 .emergency-badge-btn:hover { background: var(--red); color: white; transform: translateY(-1px); }
+
+/* Supabase Status Pill */
+.supabase-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: bold; background: #e0f2fe; color: #0369a1; }
+.supabase-pill.connected { background: #dcfce7; color: #15803d; }
+.supabase-pill.error { background: #fee2e2; color: #b91c1c; }
 
 /* Hero Section */
 .hero { background: linear-gradient(120deg, #9e1026, #d52b45); color: white; padding: 58px 22px 70px; }
@@ -130,8 +137,10 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 
 <header id="mainHeader">
   <div class="nav">
-    <!-- Secret Trigger: Click logo 3 times to open admin login -->
-    <div class="brand" id="brandLogo">Find<span>Blood</span> <small style="font-size:11px;color:#777">Dharanji</small></div>
+    <div class="brand" id="brandLogo" title="অ্যাডমিন অ্যাক্সেসের জন্য ৩ বার ক্লিক করুন">
+      Find<span>Blood</span> <small style="font-size:11px;color:#777">Dharanji</small>
+    </div>
+    <div id="dbStatus" class="supabase-pill">⚡ Supabase কানেক্টিং...</div>
     <nav>
       <a href="#search">রক্তদাতা খুঁজুন</a>
       <a href="#register">নিবন্ধন</a>
@@ -140,7 +149,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </header>
 
-<!-- LANDING PAGE HERO SECTION -->
+<!-- HERO SECTION -->
 <section class="hero landing-view" id="heroSection">
   <div class="hero-inner">
     <div>
@@ -161,14 +170,17 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 </section>
 
 <main class="container">
-  <!-- ADMIN DASHBOARD SECTION (Shows ONLY when Admin Logged In) -->
+  <!-- ADMIN DASHBOARD SECTION -->
   <section class="panel hidden" id="adminDashboardSection" style="border: 2px solid var(--red);">
     <div class="admin-header">
       <div>
-        <h2 style="color:var(--red)">⚙️ অ্যাডমিন এডিশন প্যানেল (Secret Edit Mode)</h2>
+        <h2 style="color:var(--red)">⚙️ অ্যাডমিন এডিশন প্যানেল (Control Center)</h2>
         <span class="muted">রক্তদাতা যাচাই, তথ্য সংশোধন, এলাকা ও জরুরি সহায়তা ব্যবস্থাপনা</span>
       </div>
-      <button class="btn-secondary btn-sm" onclick="logoutAdmin()">লগআউট (Logout)</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-green btn-sm" onclick="fetchDonorsFromSupabase()">🔄 রিফ্রেশ ডাটা</button>
+        <button class="btn-secondary btn-sm" onclick="logoutAdmin()">লগআউট</button>
+      </div>
     </div>
 
     <div class="admin-tabs">
@@ -202,9 +214,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
               <th>অ্যাকশন</th>
             </tr>
           </thead>
-          <tbody id="adminDonorTableBody">
-            <!-- Dynamic Admin Donor Rows -->
-          </tbody>
+          <tbody id="adminDonorTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -218,9 +228,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
       </div>
 
       <h3>বিদ্যমান এলাকাসমূহ</h3>
-      <ul id="locationList" style="list-style:none; padding:0; max-width:500px;">
-        <!-- Dynamic location items -->
-      </ul>
+      <ul id="locationList" style="list-style:none; padding:0; max-width:500px;"></ul>
     </div>
 
     <!-- Admin Tab 3: Emergency Support Settings -->
@@ -292,9 +300,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
           <option>AB+</option><option>AB-</option>
           <option>O+</option><option>O-</option>
         </select>
-        <select id="area" onchange="renderPublicDonors()">
-          <!-- Dynamic Area Options -->
-        </select>
+        <select id="area" onchange="renderPublicDonors()"></select>
         <button onclick="renderPublicDonors()">খুঁজুন</button>
       </div>
     </section>
@@ -302,7 +308,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
     <!-- PUBLIC DONORS LIST -->
     <div class="section-head">
       <h2>অনুমোদিত রক্তদাতার তালিকা</h2>
-      <span class="muted" id="resultCount"></span>
+      <span class="muted" id="resultCount">লোড হচ্ছে...</span>
     </div>
     <div class="grid" id="donors"></div>
 
@@ -311,7 +317,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
       <div class="section-head" style="margin-top:0">
         <div>
           <h2>রক্তদাতা হিসেবে নিবন্ধন করুন</h2>
-          <div class="muted">আপনার তথ্য দিয়ে স্বেচ্ছাসেবী তালিকায় যুক্ত হোন (যাচাইয়ের পর প্রকাশিত হবে)</div>
+          <div class="muted">সরাসরি Supabase ক্লাউড ডাটাবেজে যুক্ত হন (যাচাইয়ের পর প্রকাশিত হবে)</div>
         </div>
       </div>
       <form id="donorForm">
@@ -324,18 +330,16 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
             <option>AB+</option><option>AB-</option>
             <option>O+</option><option>O-</option>
           </select>
-          <select name="area" id="regArea" required>
-            <!-- Dynamic Area Options -->
-          </select>
+          <select name="area" id="regArea" required></select>
           <input name="location" placeholder="গ্রাম / ইউনিয়ন / বিস্তারিত এলাকা" required>
           <input name="phone" type="tel" placeholder="মোবাইল নম্বর" required>
           <input name="last" placeholder="সর্বশেষ কবে রক্ত দিয়েছেন? (ঐচ্ছিক)">
-          <div class="full note">আপনার জমা দেওয়া তথ্য অ্যাডমিন দ্বারা যাচাই হওয়ার পর সর্বসাধারণের জন্য প্রকাশিত হবে। সঠিক মোবাইল নম্বর নিশ্চিত করুন।</div>
+          <div class="full note">আপনার জমা দেওয়া তথ্য সরাসরি আমাদের অনলাইন ডাটাবেজে যুক্ত হবে এবং অ্যাডমিন দ্বারা যাচাই হওয়ার পর সর্বসাধারণের জন্য প্রকাশিত হবে। সঠিক মোবাইল নম্বর নিশ্চিত করুন।</div>
           <label class="full" style="font-size:14px">
             <input type="checkbox" required style="width:auto;margin-right:8px">আমি স্বেচ্ছায় তথ্য জমা দিতে এবং যোগাযোগের নম্বর প্রকাশ করতে সম্মত।
           </label>
           <div class="full">
-            <button type="submit">নিবন্ধন করুন</button>
+            <button type="submit" id="submitBtn">নিবন্ধন জমা দিন</button>
           </div>
         </div>
       </form>
@@ -349,7 +353,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
     <h3 style="color:var(--red); display:flex; align-items:center; gap:8px;">
       🚨 জরুরি রক্ত সহায়তা (Emergency Support)
     </h3>
-    <p class="muted" style="font-size:14px; margin-bottom:12px;">জরুরি প্রয়োজনে সরাসরি আমাদের হটলাইন বা প্রতিনিধি টিমের সাথে যোগাযোগ করুন:</p>
+    <p class="muted" style="font-size:14px; margin-bottom:12px;">জরুরি প্রয়োজনে সরাসরি আমাদের হটলাইন বা প্রতিনিধির সাথে যোগাযোগ করুন:</p>
     
     <div class="emergency-card">
       <p>👤 <strong>দায়িত্বপ্রাপ্ত ব্যক্তি:</strong> <span id="emDisplayName">লোড হচ্ছে...</span></p>
@@ -369,7 +373,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 <div id="loginModal" class="modal-overlay hidden">
   <div class="modal">
     <h3>🔐 অ্যাডমিন সিক্রেট প্যানেল লগইন</h3>
-    <p class="muted" style="margin-bottom:15px">অ্যাডমিন প্রবেশাধিকার নিশ্চিত করতে পাসওয়ার্ড দিন। (Default: <b>admin</b>)</p>
+    <p class="muted" style="margin-bottom:15px">অ্যাডমিন প্রবেশাধিকার নিশ্চিত করতে পাসওয়ার্ড দিন। (ডিফল্ট: <b>admin</b>)</p>
     <input type="password" id="adminPasswordInput" placeholder="পাসওয়ার্ড লিখুন">
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeAdminModal()">বাতিল</button>
@@ -436,77 +440,28 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 </footer>
 
 <script>
-// --- INITIAL DATA STORES ---
-const defaultDonors = [
-  { id: "1", name: "রাফি আহমেদ", blood: "O+", area: "ধরঞ্জি", location: "ধরঞ্জি বাজার", phone: "01700000001", last: "১৫ জানুয়ারি ২০২৪", status: "APPROVED" },
-  { id: "2", name: "সাব্বির হোসেন", blood: "B+", area: "জয়পুরহাট", location: "জয়পুরহাট সদর", phone: "01800000002", last: "১০ ফেব্রুয়ারি ২০২৪", status: "APPROVED" },
-  { id: "3", name: "মোঃ করিম", blood: "A+", area: "পাঁচবিবি", location: "পাঁচবিবি", phone: "01900000003", last: "তথ্য নেই", status: "PENDING" }
-];
+// --- SUPABASE CONFIGURATION ---
+const SUPABASE_URL = "https://bbdoqxkpvmprsnxotzwr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_9LGMORTYFaqpM5XprD76vA_vj_6s-ZU";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Fallback & Config Keys
+const PASS_KEY = "findblood_admin_password";
+const AREA_KEY = "findblood_areas_v3";
+const EMERGENCY_KEY = "findblood_emergency_v3";
 
 const defaultAreas = ["ধরঞ্জি", "জয়পুরহাট", "পাঁচবিবি", "অন্যান্য"];
-
 const defaultEmergencyInfo = {
   name: "জরুরি সেবা টিম (ধরঞ্জি)",
   phone: "01711223344",
   location: "ধরঞ্জি, জয়পুরহাট এলাকা",
-  note: "জরুরি রক্ত বা কোনো তাত্ক্ষণিক সহযোগিতার প্রয়োজন হলে আমাদের হেল্পলাইন নম্বরে সরাসরি কল দিন।"
+  note: "জরুরি রক্ত বা কোনো তাত্ক্ষণিক সহযোগিতার প্রয়োজন হলে সরাসরি আমাদের হেল্পলাইন নম্বরে কল দিন।"
 };
 
-const DONOR_KEY = "findblood_donors_v2";
-const AREA_KEY = "findblood_areas_v2";
-const EMERGENCY_KEY = "findblood_emergency_info";
-const PASS_KEY = "findblood_admin_password";
-
+let donorsList = [];
 let isAdminLoggedIn = false;
 let logoClickCount = 0;
 let logoClickTimer;
-
-function getDonors() {
-  try {
-    const data = localStorage.getItem(DONOR_KEY);
-    return data ? JSON.parse(data) : defaultDonors;
-  } catch(e) {
-    return defaultDonors;
-  }
-}
-
-function saveDonors(donors) {
-  localStorage.setItem(DONOR_KEY, JSON.stringify(donors));
-}
-
-function getAreas() {
-  try {
-    const data = localStorage.getItem(AREA_KEY);
-    return data ? JSON.parse(data) : defaultAreas;
-  } catch(e) {
-    return defaultAreas;
-  }
-}
-
-function saveAreas(areas) {
-  localStorage.setItem(AREA_KEY, JSON.stringify(areas));
-}
-
-function getEmergencyInfo() {
-  try {
-    const data = localStorage.getItem(EMERGENCY_KEY);
-    return data ? JSON.parse(data) : defaultEmergencyInfo;
-  } catch(e) {
-    return defaultEmergencyInfo;
-  }
-}
-
-function saveEmergencyInfo(info) {
-  localStorage.setItem(EMERGENCY_KEY, JSON.stringify(info));
-}
-
-function getAdminPassword() {
-  return localStorage.getItem(PASS_KEY) || "admin";
-}
-
-function setAdminPassword(pass) {
-  localStorage.setItem(PASS_KEY, pass);
-}
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, c => ({
@@ -514,13 +469,53 @@ function esc(s) {
   }[c]));
 }
 
+// Fetch all donors from Supabase
+async function fetchDonorsFromSupabase() {
+  const dbStatus = document.getElementById('dbStatus');
+  try {
+    const { data, error } = await supabaseClient
+      .from('donors')
+      .select('*')
+      .order('id', { ascending: false });
+
+    if (error) throw error;
+
+    donorsList = data || [];
+    dbStatus.className = 'supabase-pill connected';
+    dbStatus.textContent = '● Supabase কানেক্টেড';
+    renderPublicDonors();
+    if (isAdminLoggedIn) renderAdminDonors();
+  } catch (err) {
+    console.error("Supabase Error:", err);
+    dbStatus.className = 'supabase-pill error';
+    dbStatus.textContent = '⚠️ ডাটাবেজ অফলাইন';
+    document.getElementById('donors').innerHTML = '<div class="empty">ডাটাবেজের সাথে সংযোগ স্থাপন করা যায়নি। টেবিলে RLS পলিসি ঠিক আছে কি না নিশ্চিত করুন।</div>';
+  }
+}
+
+// Subscribe to Realtime Inserts/Updates
+function setupRealtimeListener() {
+  try {
+    supabaseClient
+      .channel('public:donors')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'donors' }, () => {
+        fetchDonorsFromSupabase();
+      })
+      .subscribe();
+  } catch(e) {
+    console.warn("Realtime not available:", e);
+  }
+}
+
+// Init Setup
 function init() {
   populateAreaDropdowns();
-  renderPublicDonors();
   checkSecretTrigger();
   updateViewMode();
+  fetchDonorsFromSupabase();
+  setupRealtimeListener();
 
-  // Secret Logo Trigger: Click Logo 3 times within 2 seconds
+  // Secret Logo Trigger: Click 3 times
   document.getElementById('brandLogo').addEventListener('click', function() {
     logoClickCount++;
     clearTimeout(logoClickTimer);
@@ -541,7 +536,6 @@ function checkSecretTrigger() {
 
 function updateViewMode() {
   const landingElems = document.querySelectorAll('.landing-view');
-  const mainHeader = document.getElementById('mainHeader');
   const mainFooter = document.getElementById('mainFooter');
   const adminSection = document.getElementById('adminDashboardSection');
 
@@ -556,12 +550,25 @@ function updateViewMode() {
   }
 }
 
+function getAreas() {
+  try {
+    const raw = localStorage.getItem(AREA_KEY);
+    return raw ? JSON.parse(raw) : defaultAreas;
+  } catch(e) {
+    return defaultAreas;
+  }
+}
+
+function saveAreas(arr) {
+  localStorage.setItem(AREA_KEY, JSON.stringify(arr));
+}
+
 function populateAreaDropdowns() {
   const areas = getAreas();
   const searchAreaSelect = document.getElementById('area');
-  const currentSearchVal = searchAreaSelect.value;
+  const currentVal = searchAreaSelect.value;
   searchAreaSelect.innerHTML = '<option value="">সব এলাকা</option>' + areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
-  searchAreaSelect.value = currentSearchVal;
+  searchAreaSelect.value = currentVal;
 
   const regAreaSelect = document.getElementById('regArea');
   regAreaSelect.innerHTML = '<option value="">এলাকা নির্বাচন করুন</option>' + areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
@@ -572,32 +579,13 @@ function populateAreaDropdowns() {
   renderAdminLocationList();
 }
 
-function openEmergencyModal() {
-  const info = getEmergencyInfo();
-  document.getElementById('emDisplayName').textContent = info.name || "তথ্য নেই";
-  document.getElementById('emDisplayPhone').textContent = info.phone || "তথ্য নেই";
-  document.getElementById('emDisplayLocation').textContent = info.location || "তথ্য নেই";
-  document.getElementById('emDisplayNote').textContent = info.note || "";
-  
-  const callBtn = document.getElementById('emCallBtn');
-  callBtn.href = "tel:" + (info.phone || "");
-  callBtn.textContent = `📞 কল করুন (${info.phone || ''})`;
-  
-  document.getElementById('emergencyModal').classList.remove('hidden');
-}
-
-function closeEmergencyModal() {
-  document.getElementById('emergencyModal').classList.add('hidden');
-}
-
 function renderPublicDonors() {
-  const donors = getDonors();
   const q = document.getElementById('q').value.trim().toLowerCase();
   const g = document.getElementById('group').value;
   const a = document.getElementById('area').value;
 
-  const approvedDonors = donors.filter(d => d.status === 'APPROVED');
-  const pendingCount = donors.filter(d => d.status === 'PENDING').length;
+  const approvedDonors = donorsList.filter(d => d.status === 'APPROVED');
+  const pendingCount = donorsList.filter(d => d.status === 'PENDING').length;
 
   const filtered = approvedDonors.filter(d => 
     (!g || d.blood === g) &&
@@ -618,7 +606,7 @@ function renderPublicDonors() {
           </div>
           <h3>${esc(d.name)}</h3>
           <p>⌖ ${esc(d.location)}</p>
-          <p class="muted">সর্বশেষ রক্তদান: ${esc(d.last || "তথ্য দেওয়া হয়নি")}</p>
+          <p class="muted">সর্বশেষ রক্তদান: ${esc(d.last_donation || "তথ্য নেই")}</p>
         </div>
         <a class="contact" href="tel:${esc(d.phone)}">📞 কল করুন · ${esc(d.phone)}</a>
       </article>
@@ -636,31 +624,45 @@ function renderPublicDonors() {
   }
 }
 
-document.getElementById('donorForm').addEventListener('submit', function(e) {
+// FORM SUBMISSION -> DIRECT INSERT TO SUPABASE
+document.getElementById('donorForm').addEventListener('submit', async function(e) {
   e.preventDefault();
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'সংরক্ষণ করা হচ্ছে...';
+
   const formData = new FormData(e.target);
   const newDonor = {
-    id: Date.now().toString(),
-    name: formData.get('name'),
+    name: formData.get('name').trim(),
     blood: formData.get('blood'),
     area: formData.get('area'),
-    location: formData.get('location'),
-    phone: formData.get('phone'),
-    last: formData.get('last') || "তথ্য দেওয়া হয়নি",
+    location: formData.get('location').trim(),
+    phone: formData.get('phone').trim(),
+    last_donation: formData.get('last') ? formData.get('last').trim() : 'তথ্য নেই',
     status: 'PENDING'
   };
 
-  const donors = getDonors();
-  donors.push(newDonor);
-  saveDonors(donors);
+  try {
+    const { data, error } = await supabaseClient
+      .from('donors')
+      .insert([newDonor])
+      .select();
 
-  e.target.reset();
-  renderPublicDonors();
-  if (isAdminLoggedIn) renderAdminDonors();
+    if (error) throw error;
 
-  alert('আপনার নিবন্ধন তথ্য জমা দেওয়া হয়েছে! অ্যাডমিন যাচাইকরণের পর আপনার নাম রক্তদাতার তালিকায় প্রকাশিত হবে।');
+    alert('ধন্যবাদ! আপনার নিবন্ধন তথ্য সফলভাবে Supabase ডাটাবেজে জমা হয়েছে। অ্যাডমিনের অনুমোদনের পর তালিকাভুক্ত হবে।');
+    e.target.reset();
+    fetchDonorsFromSupabase();
+  } catch (err) {
+    console.error(err);
+    alert('ডাটাবেজে যুক্ত করতে সমস্যা হয়েছে: ' + (err.message || 'Error'));
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'নিবন্ধন জমা দিন';
+  }
 });
 
+// ADMIN MANAGEMENT
 function openAdminModal() {
   if (isAdminLoggedIn) {
     updateViewMode();
@@ -675,7 +677,7 @@ function closeAdminModal() {
 
 function verifyAdminLogin() {
   const pass = document.getElementById('adminPasswordInput').value;
-  const currentPass = getAdminPassword();
+  const currentPass = localStorage.getItem(PASS_KEY) || "admin";
 
   if (pass === currentPass) {
     isAdminLoggedIn = true;
@@ -713,14 +715,13 @@ function switchAdminTab(tab) {
 }
 
 function renderAdminDonors() {
-  const donors = getDonors();
   const filterStatus = document.getElementById('adminFilterStatus').value;
   const tbody = document.getElementById('adminDonorTableBody');
 
-  const filtered = donors.filter(d => filterStatus === 'ALL' || d.status === filterStatus);
+  const filtered = donorsList.filter(d => filterStatus === 'ALL' || d.status === filterStatus);
 
   document.getElementById('adminStatsSummary').textContent = 
-    `মোট: ${donors.length} | অনুমোদিত: ${donors.filter(d=>d.status==='APPROVED').length} | অপেক্ষমাণ: ${donors.filter(d=>d.status==='PENDING').length}`;
+    `মোট: ${donorsList.length} | অনুমোদিত: ${donorsList.filter(d=>d.status==='APPROVED').length} | অপেক্ষমাণ: ${donorsList.filter(d=>d.status==='PENDING').length}`;
 
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">কোনো তথ্য পাওয়া যায়নি।</td></tr>';
@@ -733,7 +734,7 @@ function renderAdminDonors() {
       <td><span class="blood" style="font-size:14px; padding:3px 7px;">${esc(d.blood)}</span></td>
       <td>${esc(d.area)} <br><small class="muted">${esc(d.location)}</small></td>
       <td><a href="tel:${esc(d.phone)}" style="color:var(--red); font-weight:bold;">${esc(d.phone)}</a></td>
-      <td>${esc(d.last)}</td>
+      <td>${esc(d.last_donation || "তথ্য নেই")}</td>
       <td>
         ${d.status === 'APPROVED' 
           ? '<span class="status-pill status-approved">✓ অনুমোদিত</span>' 
@@ -742,51 +743,50 @@ function renderAdminDonors() {
       <td>
         <div class="action-btns">
           ${d.status === 'PENDING' 
-            ? `<button class="btn-green btn-sm" onclick="approveDonor('${d.id}')">অনুমোদন</button>` 
-            : `<button class="btn-secondary btn-sm" onclick="toggleStatus('${d.id}')">পেন্ডিং করুন</button>`}
-          <button class="btn-secondary btn-sm" onclick="openEditModal('${d.id}')">Edit</button>
-          <button class="btn-danger btn-sm" onclick="deleteDonor('${d.id}')">ডিলিট</button>
+            ? `<button class="btn-green btn-sm" onclick="updateDonorStatus(${d.id}, 'APPROVED')">অনুমোদন</button>` 
+            : `<button class="btn-secondary btn-sm" onclick="updateDonorStatus(${d.id}, 'PENDING')">পেন্ডিং করুন</button>`}
+          <button class="btn-secondary btn-sm" onclick="openEditModal(${d.id})">Edit</button>
+          <button class="btn-danger btn-sm" onclick="deleteDonorFromDb(${d.id})">মুছে ফেলুন</button>
         </div>
       </td>
     </tr>
   `).join('');
 }
 
-function approveDonor(id) {
-  const donors = getDonors();
-  const donor = donors.find(d => d.id === id);
-  if (donor) {
-    donor.status = 'APPROVED';
-    saveDonors(donors);
-    renderAdminDonors();
-    renderPublicDonors();
+// UPDATE STATUS IN SUPABASE
+async function updateDonorStatus(id, newStatus) {
+  try {
+    const { error } = await supabaseClient
+      .from('donors')
+      .update({ status: newStatus })
+      .eq('id', id);
+
+    if (error) throw error;
+    fetchDonorsFromSupabase();
+  } catch (err) {
+    alert('আপডেট ব্যর্থ হয়েছে: ' + err.message);
   }
 }
 
-function toggleStatus(id) {
-  const donors = getDonors();
-  const donor = donors.find(d => d.id === id);
-  if (donor) {
-    donor.status = donor.status === 'APPROVED' ? 'PENDING' : 'APPROVED';
-    saveDonors(donors);
-    renderAdminDonors();
-    renderPublicDonors();
+// DELETE IN SUPABASE
+async function deleteDonorFromDb(id) {
+  if (!confirm('আপনি কি নিশ্চিত যে এই আবেদনটি স্থায়ীভাবে মুছে ফেলতে চান?')) return;
+  try {
+    const { error } = await supabaseClient
+      .from('donors')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    fetchDonorsFromSupabase();
+  } catch (err) {
+    alert('ডিলিট ব্যর্থ হয়েছে: ' + err.message);
   }
 }
 
-function deleteDonor(id) {
-  if (confirm('আপনি কি নিশ্চিত যে এই আবেদনটি ডিলিট করতে চান?')) {
-    let donors = getDonors();
-    donors = donors.filter(d => d.id !== id);
-    saveDonors(donors);
-    renderAdminDonors();
-    renderPublicDonors();
-  }
-}
-
+// EDIT MODAL
 function openEditModal(id) {
-  const donors = getDonors();
-  const d = donors.find(item => item.id === id);
+  const d = donorsList.find(item => item.id === id);
   if (!d) return;
 
   document.getElementById('editDonorId').value = d.id;
@@ -795,7 +795,7 @@ function openEditModal(id) {
   document.getElementById('editArea').value = d.area;
   document.getElementById('editLocation').value = d.location;
   document.getElementById('editPhone').value = d.phone;
-  document.getElementById('editLast').value = d.last;
+  document.getElementById('editLast').value = d.last_donation || '';
   document.getElementById('editStatus').value = d.status;
 
   document.getElementById('editModal').classList.remove('hidden');
@@ -805,28 +805,35 @@ function closeEditModal() {
   document.getElementById('editModal').classList.add('hidden');
 }
 
-document.getElementById('editDonorForm').addEventListener('submit', function(e) {
+document.getElementById('editDonorForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const id = document.getElementById('editDonorId').value;
-  const donors = getDonors();
-  const d = donors.find(item => item.id === id);
+  const updatedData = {
+    name: document.getElementById('editName').value.trim(),
+    blood: document.getElementById('editBlood').value,
+    area: document.getElementById('editArea').value,
+    location: document.getElementById('editLocation').value.trim(),
+    phone: document.getElementById('editPhone').value.trim(),
+    last_donation: document.getElementById('editLast').value.trim(),
+    status: document.getElementById('editStatus').value
+  };
 
-  if (d) {
-    d.name = document.getElementById('editName').value;
-    d.blood = document.getElementById('editBlood').value;
-    d.area = document.getElementById('editArea').value;
-    d.location = document.getElementById('editLocation').value;
-    d.phone = document.getElementById('editPhone').value;
-    d.last = document.getElementById('editLast').value;
-    d.status = document.getElementById('editStatus').value;
+  try {
+    const { error } = await supabaseClient
+      .from('donors')
+      .update(updatedData)
+      .eq('id', id);
 
-    saveDonors(donors);
+    if (error) throw error;
+
     closeEditModal();
-    renderAdminDonors();
-    renderPublicDonors();
+    fetchDonorsFromSupabase();
+  } catch (err) {
+    alert('সম্পাদনা ব্যর্থ হয়েছে: ' + err.message);
   }
 });
 
+// LOCATIONS MANAGEMENT
 function addNewLocation() {
   const input = document.getElementById('newAreaInput');
   const val = input.value.trim();
@@ -846,7 +853,7 @@ function addNewLocation() {
   saveAreas(areas);
   input.value = '';
   populateAreaDropdowns();
-  alert('নতুন এলাকা সফলভাবে যুক্ত হয়েছে!');
+  alert('নতুন এলাকা যুক্ত হয়েছে!');
 }
 
 function removeLocation(areaName) {
@@ -864,14 +871,41 @@ function removeLocation(areaName) {
 }
 
 function renderAdminLocationList() {
-  const areas = getAreas();
   const ul = document.getElementById('locationList');
-  ul.innerHTML = areas.map(a => `
+  ul.innerHTML = getAreas().map(a => `
     <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px;">
       <span>📍 <strong>${esc(a)}</strong></span>
       <button class="btn-danger btn-sm" onclick="removeLocation('${esc(a)}')">মুছে ফেলুন</button>
     </li>
   `).join('');
+}
+
+// EMERGENCY INFO
+function getEmergencyInfo() {
+  try {
+    const raw = localStorage.getItem(EMERGENCY_KEY);
+    return raw ? JSON.parse(raw) : defaultEmergencyInfo;
+  } catch(e) {
+    return defaultEmergencyInfo;
+  }
+}
+
+function openEmergencyModal() {
+  const info = getEmergencyInfo();
+  document.getElementById('emDisplayName').textContent = info.name || "তথ্য নেই";
+  document.getElementById('emDisplayPhone').textContent = info.phone || "তথ্য নেই";
+  document.getElementById('emDisplayLocation').textContent = info.location || "তথ্য নেই";
+  document.getElementById('emDisplayNote').textContent = info.note || "";
+  
+  const callBtn = document.getElementById('emCallBtn');
+  callBtn.href = "tel:" + (info.phone || "");
+  callBtn.textContent = `📞 কল করুন (${info.phone || ''})`;
+  
+  document.getElementById('emergencyModal').classList.remove('hidden');
+}
+
+function closeEmergencyModal() {
+  document.getElementById('emergencyModal').classList.add('hidden');
 }
 
 function loadEmergencyInfoIntoAdmin() {
@@ -891,10 +925,11 @@ document.getElementById('adminEmergencyForm').addEventListener('submit', functio
     note: document.getElementById('emAdminNote').value.trim()
   };
 
-  saveEmergencyInfo(updatedInfo);
+  localStorage.setItem(EMERGENCY_KEY, JSON.stringify(updatedInfo));
   alert('জরুরি সহায়তা তথ্য সফলভাবে হালনাগাদ করা হয়েছে!');
 });
 
+// PASSWORD CHANGE
 document.getElementById('adminPasswordForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const p1 = document.getElementById('newAdminPassword').value;
@@ -905,7 +940,7 @@ document.getElementById('adminPasswordForm').addEventListener('submit', function
     return;
   }
 
-  setAdminPassword(p1);
+  localStorage.setItem(PASS_KEY, p1);
   alert('পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!');
   document.getElementById('adminPasswordForm').reset();
 });
