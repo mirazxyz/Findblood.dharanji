@@ -41,20 +41,26 @@ h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.15; margin: 0 0 15px; }
 .hero-card small { color: var(--muted); font-weight: 600; }
 
 /* Layout & Panels */
-.container { max-width: 1120px; margin: -28px auto 50px; padding: 0 22px; position: relative; }
+.container { max-width: 1120px; margin: 30px auto 50px; padding: 0 22px; position: relative; }
+.landing-view { margin-top: -58px; }
 .panel { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: 0 8px 25px #1720330a; margin-bottom: 25px; }
 .section-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 30px 0 16px; }
 h2 { font-size: 23px; margin: 0; }
 .muted { color: var(--muted); font-size: 14px; }
 
 /* Form Components */
-.filters { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; }
+.filters { display: grid; grid-template-columns: 1.2fr .7fr .9fr auto; gap: 12px; }
 input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid #d9dde5; border-radius: 9px; font-size: 15px; background: white; color: var(--dark); }
 input:focus, select:focus, textarea:focus { outline: 2px solid #f3b6c0; border-color: var(--red); }
 button { border: 0; border-radius: 9px; padding: 12px 18px; background: var(--red); color: white; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
 button:hover { background: var(--red-hover); }
 .btn-secondary { background: #fff; color: var(--red); border: 1px solid #e7b5bd; }
 .btn-secondary:hover { background: #fff0f2; }
+.btn-green { background: var(--green); }
+.btn-green:hover { background: #059669; }
+.btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+.btn-danger { background: #ef4444; }
+.btn-danger:hover { background: #dc2626; }
 
 /* Public Donor Cards */
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
@@ -71,10 +77,29 @@ button:hover { background: var(--red-hover); }
 .note { font-size: 13px; line-height: 1.6; color: #6b7280; background: #fff8e9; border: 1px solid #f3e3b8; padding: 12px; border-radius: 9px; }
 .empty { grid-column: 1/-1; text-align: center; padding: 35px; color: var(--muted); background: white; border: 1px dashed #d5d9e1; border-radius: 12px; }
 
+/* Admin Panel Styles */
+.admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--line); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+.status-pill { font-size: 12px; padding: 4px 10px; border-radius: 20px; font-weight: 700; display: inline-block; }
+.status-approved { background: #d1fae5; color: #065f46; }
+.status-pending { background: #fef3c7; color: #92400e; }
+
+/* Admin Table */
+.table-responsive { overflow-x: auto; margin-top: 15px; }
+.admin-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 650px; }
+.admin-table th, .admin-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.admin-table th { background: #f8fafc; color: #475569; font-weight: 700; }
+.action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
 /* Modals */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(3px); }
 .modal { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; }
 .modal h3 { margin-top: 0; color: var(--dark); font-size: 20px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+/* Tabs inside Admin */
+.admin-tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--line); margin-bottom: 20px; overflow-x: auto; }
+.tab-btn { background: none; border: none; color: var(--muted); padding: 10px 16px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; border-radius: 0; white-space: nowrap; }
+.tab-btn.active { color: var(--red); border-bottom-color: var(--red); background: none; }
 
 /* Emergency Modal Custom Box */
 .emergency-card { background: #fff5f5; border: 1.5px solid #feb2b2; border-radius: 12px; padding: 16px; margin: 15px 0; }
@@ -103,9 +128,10 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 </head>
 <body>
 
-<header>
+<header id="mainHeader">
   <div class="nav">
-    <div class="brand" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Find<span>Blood</span> <small style="font-size:11px;color:#777">Dharanji</small></div>
+    <!-- Secret Trigger: Click logo 3 times to open admin login -->
+    <div class="brand" id="brandLogo">Find<span>Blood</span> <small style="font-size:11px;color:#777">Dharanji</small></div>
     <nav>
       <a href="#search">রক্তদাতা খুঁজুন</a>
       <a href="#register">নিবন্ধন</a>
@@ -114,7 +140,8 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </header>
 
-<section class="hero">
+<!-- LANDING PAGE HERO SECTION -->
+<section class="hero landing-view" id="heroSection">
   <div class="hero-inner">
     <div>
       <h1>রক্তের প্রয়োজনে,<br>পাশে আছে মানুষ।</h1>
@@ -125,81 +152,195 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
         <strong id="donorCount">০</strong>
         <small>অনুমোদিত রক্তদাতা</small>
       </div>
+      <div class="hero-card" id="pendingCard" style="display:none; background:#fffbeb;">
+        <strong id="pendingCount" style="color:var(--yellow)">০</strong>
+        <small style="color:#b45309">অপেক্ষমাণ আবেদন</small>
+      </div>
     </div>
   </div>
 </section>
 
 <main class="container">
-  <!-- PUBLIC SEARCH SECTION -->
-  <section class="panel" id="search">
-    <div class="section-head" style="margin-top:0">
+  <!-- ADMIN DASHBOARD SECTION (Shows ONLY when Admin Logged In) -->
+  <section class="panel hidden" id="adminDashboardSection" style="border: 2px solid var(--red);">
+    <div class="admin-header">
       <div>
-        <h2>রক্তদাতা খুঁজুন</h2>
-        <div class="muted">রক্তের গ্রুপ, ইউনিয়ন ও গ্রাম নির্বাচন করে খুঁজুন</div>
+        <h2 style="color:var(--red)">⚙️ অ্যাডমিন এডিশন প্যানেল (Secret Edit Mode)</h2>
+        <span class="muted">রক্তদাতা যাচাই, তথ্য সংশোধন, এলাকা ও জরুরি সহায়তা ব্যবস্থাপনা</span>
+      </div>
+      <button class="btn-secondary btn-sm" onclick="logoutAdmin()">লগআউট (Logout)</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-btn active" id="tabBtnDonors" onclick="switchAdminTab('donors')">📋 রক্তদাতা তালিকা ও যাচাই</button>
+      <button class="tab-btn" id="tabBtnLocations" onclick="switchAdminTab('locations')">📍 এলাকা ব্যবস্থাপনা</button>
+      <button class="tab-btn" id="tabBtnEmergency" onclick="switchAdminTab('emergency')">🚨 জরুরি সহায়তা সেটিংস</button>
+      <button class="tab-btn" id="tabBtnSecurity" onclick="switchAdminTab('security')">🔑 পাসওয়ার্ড পরিবর্তন</button>
+    </div>
+
+    <!-- Admin Tab 1: Donors List & Verification -->
+    <div id="tabDonors">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div class="muted" id="adminStatsSummary">মোট রক্তদাতা: 0 জন</div>
+        <select id="adminFilterStatus" style="width:auto; padding:6px 12px; font-size:13px;" onchange="renderAdminDonors()">
+          <option value="ALL">সকল আবেদন</option>
+          <option value="PENDING">অপেক্ষমাণ (Pending)</option>
+          <option value="APPROVED">অনুমোদিত (Approved)</option>
+        </select>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>নাম</th>
+              <th>গ্রুপ</th>
+              <th>এলাকা ও স্থান</th>
+              <th>মোবাইল নম্বর</th>
+              <th>সর্বশেষ রক্তদান</th>
+              <th>স্ট্যাটাস</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="adminDonorTableBody">
+            <!-- Dynamic Admin Donor Rows -->
+          </tbody>
+        </table>
       </div>
     </div>
-    <div class="filters">
-      <input id="q" placeholder="নাম খুঁজুন" oninput="renderPublicDonors()">
-      <select id="group" onchange="renderPublicDonors()">
-        <option value="">সব রক্তের গ্রুপ</option>
-        <option>A+</option><option>A-</option>
-        <option>B+</option><option>B-</option>
-        <option>AB+</option><option>AB-</option>
-        <option>O+</option><option>O-</option>
-      </select>
-      <select id="area" onchange="updatePublicGramDropdown()">
-        <!-- Dynamic Union Options -->
-      </select>
-      <select id="gram" onchange="renderPublicDonors()">
-        <!-- Dynamic Gram Options -->
-      </select>
-      <button onclick="renderPublicDonors()">খুঁজুন</button>
+
+    <!-- Admin Tab 2: Location Management -->
+    <div id="tabLocations" class="hidden">
+      <h3>নতুন এলাকা/ইউনিয়ন যোগ করুন</h3>
+      <div style="display:flex; gap:10px; max-width:500px; margin-bottom:20px;">
+        <input type="text" id="newAreaInput" placeholder="নতুন এলাকার নাম (যেমন: ধামইরহাট)">
+        <button onclick="addNewLocation()" style="white-space:nowrap;">+ যোগ করুন</button>
+      </div>
+
+      <h3>বিদ্যমান এলাকাসমূহ</h3>
+      <ul id="locationList" style="list-style:none; padding:0; max-width:500px;">
+        <!-- Dynamic location items -->
+      </ul>
+    </div>
+
+    <!-- Admin Tab 3: Emergency Support Settings -->
+    <div id="tabEmergency" class="hidden">
+      <h3>🚨 জরুরি সহায়তা তথ্য সম্পাদনা</h3>
+      <p class="muted">জরুরি সহায়তা বাটনে চাপ দিলে সাধারণ ব্যবহারকারীরা এই তথ্য দেখতে পাবেন।</p>
+      
+      <form id="adminEmergencyForm" style="max-width: 600px; margin-top: 15px;">
+        <div class="form-grid">
+          <div>
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">দায়িত্বপ্রাপ্ত ব্যক্তির নাম:</label>
+            <input id="emAdminName" placeholder="যেমন: মো: আরিফুল ইসলাম" required>
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">জরুরি মোবাইল নম্বর:</label>
+            <input id="emAdminPhone" type="tel" placeholder="যেমন: 01700000000" required>
+          </div>
+          <div class="full">
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">অঞ্চল / কভারেজ এলাকা:</label>
+            <input id="emAdminLocation" placeholder="যেমন: ধরঞ্জি ইউনিয়ন ও জয়পুরহাট এলাকা" required>
+          </div>
+          <div class="full">
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">বিশেষ জরুরি নির্দেশনা / বার্তা:</label>
+            <textarea id="emAdminNote" rows="3" placeholder="জরুরি রক্তের প্রয়োজনে অনতিবিলম্বে কল করুন..."></textarea>
+          </div>
+          <div class="full">
+            <button type="submit" class="btn-green">💾 পরিবর্তন সংরক্ষণ করুন</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Admin Tab 4: Password Change -->
+    <div id="tabSecurity" class="hidden">
+      <h3>🔑 অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন</h3>
+      <p class="muted">ভবিষ্যতে লগইন করার জন্য আপনার পছন্দের নতুন পাসওয়ার্ড সেট করুন।</p>
+      <form id="adminPasswordForm" style="max-width: 400px; margin-top: 15px;">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">নতুন পাসওয়ার্ড:</label>
+            <input type="password" id="newAdminPassword" required minlength="4" placeholder="নতুন পাসওয়ার্ড দিন">
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px;">কনফার্ম পাসওয়ার্ড:</label>
+            <input type="password" id="confirmAdminPassword" required minlength="4" placeholder="পুনরায় নতুন পাসওয়ার্ড দিন">
+          </div>
+          <button type="submit" class="btn-green">পাসওয়ার্ড পরিবর্তন করুন</button>
+        </div>
+      </form>
     </div>
   </section>
 
-  <!-- PUBLIC DONORS LIST -->
-  <div class="section-head">
-    <h2>অনুমোদিত রক্তদাতার তালিকা</h2>
-    <span class="muted" id="resultCount"></span>
-  </div>
-  <div class="grid" id="donors"></div>
-
-  <!-- REGISTRATION FORM SECTION -->
-  <section class="panel" id="register" style="margin-top:34px">
-    <div class="section-head" style="margin-top:0">
-      <div>
-        <h2>রক্তদাতা হিসেবে নিবন্ধন করুন</h2>
-        <div class="muted">আপনার তথ্য দিয়ে স্বেচ্ছাসেবী তালিকায় যুক্ত হোন (যাচাইয়ের পর প্রকাশিত হবে)</div>
+  <!-- PUBLIC LANDING PAGE CONTENT CONTAINER -->
+  <div id="landingViewContainer" class="landing-view">
+    <!-- PUBLIC SEARCH SECTION -->
+    <section class="panel" id="search">
+      <div class="section-head" style="margin-top:0">
+        <div>
+          <h2>রক্তদাতা খুঁজুন</h2>
+          <div class="muted">রক্তের গ্রুপ ও এলাকা নির্বাচন করুন</div>
+        </div>
       </div>
-    </div>
-    <form id="donorForm">
-      <div class="form-grid">
-        <input name="name" placeholder="আপনার পূর্ণ নাম" required>
-        <select name="blood" required>
-          <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
+      <div class="filters">
+        <input id="q" placeholder="নাম বা বিস্তারিত এলাকা লিখুন" oninput="renderPublicDonors()">
+        <select id="group" onchange="renderPublicDonors()">
+          <option value="">সব রক্তের গ্রুপ</option>
           <option>A+</option><option>A-</option>
           <option>B+</option><option>B-</option>
           <option>AB+</option><option>AB-</option>
           <option>O+</option><option>O-</option>
         </select>
-        <select name="area" id="regArea" onchange="updateRegGramDropdown()" required>
+        <select id="area" onchange="renderPublicDonors()">
           <!-- Dynamic Area Options -->
         </select>
-        <select name="location" id="regGram" required>
-          <!-- Dynamic Gram Options -->
-        </select>
-        <input name="phone" type="tel" placeholder="মোবাইল নম্বর" required>
-        <input name="last" placeholder="সর্বশেষ কবে রক্ত দিয়েছেন? (ঐচ্ছিক)">
-        <div class="full note">আপনার জমা দেওয়া তথ্য অ্যাডমিন দ্বারা যাচাই হওয়ার পর সর্বসাধারণের জন্য প্রকাশিত হবে। সঠিক মোবাইল নম্বর নিশ্চিত করুন।</div>
-        <label class="full" style="font-size:14px">
-          <input type="checkbox" required style="width:auto;margin-right:8px">আমি স্বেচ্ছায় তথ্য জমা দিতে এবং যোগাযোগের নম্বর প্রকাশ করতে সম্মত।
-        </label>
-        <div class="full">
-          <button type="submit">নিবন্ধন করুন</button>
+        <button onclick="renderPublicDonors()">খুঁজুন</button>
+      </div>
+    </section>
+
+    <!-- PUBLIC DONORS LIST -->
+    <div class="section-head">
+      <h2>অনুমোদিত রক্তদাতার তালিকা</h2>
+      <span class="muted" id="resultCount"></span>
+    </div>
+    <div class="grid" id="donors"></div>
+
+    <!-- REGISTRATION FORM SECTION -->
+    <section class="panel" id="register" style="margin-top:34px">
+      <div class="section-head" style="margin-top:0">
+        <div>
+          <h2>রক্তদাতা হিসেবে নিবন্ধন করুন</h2>
+          <div class="muted">আপনার তথ্য দিয়ে স্বেচ্ছাসেবী তালিকায় যুক্ত হোন (যাচাইয়ের পর প্রকাশিত হবে)</div>
         </div>
       </div>
-    </form>
-  </section>
+      <form id="donorForm">
+        <div class="form-grid">
+          <input name="name" placeholder="আপনার পূর্ণ নাম" required>
+          <select name="blood" required>
+            <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+          <select name="area" id="regArea" required>
+            <!-- Dynamic Area Options -->
+          </select>
+          <input name="location" placeholder="গ্রাম / ইউনিয়ন / বিস্তারিত এলাকা" required>
+          <input name="phone" type="tel" placeholder="মোবাইল নম্বর" required>
+          <input name="last" placeholder="সর্বশেষ কবে রক্ত দিয়েছেন? (ঐচ্ছিক)">
+          <div class="full note">আপনার জমা দেওয়া তথ্য অ্যাডমিন দ্বারা যাচাই হওয়ার পর সর্বসাধারণের জন্য প্রকাশিত হবে। সঠিক মোবাইল নম্বর নিশ্চিত করুন।</div>
+          <label class="full" style="font-size:14px">
+            <input type="checkbox" required style="width:auto;margin-right:8px">আমি স্বেচ্ছায় তথ্য জমা দিতে এবং যোগাযোগের নম্বর প্রকাশ করতে সম্মত।
+          </label>
+          <div class="full">
+            <button type="submit">নিবন্ধন করুন</button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </div>
 </main>
 
 <!-- EMERGENCY SUPPORT POPUP MODAL -->
@@ -224,12 +365,78 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </div>
 
-<footer>
+<!-- SECRET LOGIN MODAL -->
+<div id="loginModal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>🔐 অ্যাডমিন সিক্রেট প্যানেল লগইন</h3>
+    <p class="muted" style="margin-bottom:15px">অ্যাডমিন প্রবেশাধিকার নিশ্চিত করতে পাসওয়ার্ড দিন। (Default: <b>admin</b>)</p>
+    <input type="password" id="adminPasswordInput" placeholder="পাসওয়ার্ড লিখুন">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeAdminModal()">বাতিল</button>
+      <button onclick="verifyAdminLogin()">লগইন করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT DONOR MODAL -->
+<div id="editModal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:600px;">
+    <h3>✏️ রক্তদাতার তথ্য সম্পাদনা</h3>
+    <form id="editDonorForm" style="margin-top:15px;">
+      <input type="hidden" id="editDonorId">
+      <div class="form-grid">
+        <div>
+          <label style="font-size:12px; font-weight:bold;">নাম:</label>
+          <input id="editName" required>
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:bold;">রক্তের গ্রুপ:</label>
+          <select id="editBlood" required>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:bold;">প্রধান এলাকা:</label>
+          <select id="editArea" required></select>
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:bold;">গ্রাম/বিস্তারিত এলাকা:</label>
+          <input id="editLocation" required>
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:bold;">মোবাইল নম্বর:</label>
+          <input id="editPhone" required>
+        </div>
+        <div>
+          <label style="font-size:12px; font-weight:bold;">সর্বশেষ রক্তদান:</label>
+          <input id="editLast">
+        </div>
+        <div class="full">
+          <label style="font-size:12px; font-weight:bold;">যাচাইকরণ স্ট্যাটাস:</label>
+          <select id="editStatus">
+            <option value="APPROVED">অনুমোদিত (APPROVED)</option>
+            <option value="PENDING">অপেক্ষমাণ (PENDING)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeEditModal()">বাতিল</button>
+        <button type="submit">সংরক্ষণ করুন</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer id="mainFooter">
   FindBlood Dharanji · স্বেচ্ছায় রক্তদান, মানবতার বন্ধন<br>
   জরুরি প্রয়োজনে রক্তদাতার সঙ্গে যোগাযোগের আগে রক্তের গ্রুপ ও প্রাপ্যতা যাচাই করুন।
 </footer>
 
 <script>
+// --- INITIAL DATA STORES ---
 const defaultDonors = [
   { id: "1", name: "রাফি আহমেদ", blood: "O+", area: "ধরঞ্জি", location: "ধরঞ্জি বাজার", phone: "01700000001", last: "১৫ জানুয়ারি ২০২৪", status: "APPROVED" },
   { id: "2", name: "সাব্বির হোসেন", blood: "B+", area: "জয়পুরহাট", location: "জয়পুরহাট সদর", phone: "01800000002", last: "১০ ফেব্রুয়ারি ২০২৪", status: "APPROVED" },
@@ -237,13 +444,6 @@ const defaultDonors = [
 ];
 
 const defaultAreas = ["ধরঞ্জি", "জয়পুরহাট", "পাঁচবিবি", "অন্যান্য"];
-
-const defaultGrams = {
-  "ধরঞ্জি": ["ধরঞ্জি বাজার", "পাকুড়তলী", "চকচকা", "অন্যান্য"],
-  "জয়পুরহাট": ["জয়পুরহাট সদর", "বাসস্ট্যান্ড", "অন্যান্য"],
-  "পাঁচবিবি": ["পাঁচবিবি বাজার", "রেলগেট", "অন্যান্য"],
-  "অন্যান্য": ["অন্যান্য"]
-};
 
 const defaultEmergencyInfo = {
   name: "জরুরি সেবা টিম (ধরঞ্জি)",
@@ -254,8 +454,12 @@ const defaultEmergencyInfo = {
 
 const DONOR_KEY = "findblood_donors_v2";
 const AREA_KEY = "findblood_areas_v2";
-const GRAM_KEY = "findblood_grams_v2";
 const EMERGENCY_KEY = "findblood_emergency_info";
+const PASS_KEY = "findblood_admin_password";
+
+let isAdminLoggedIn = false;
+let logoClickCount = 0;
+let logoClickTimer;
 
 function getDonors() {
   try {
@@ -279,13 +483,8 @@ function getAreas() {
   }
 }
 
-function getGrams() {
-  try {
-    const data = localStorage.getItem(GRAM_KEY);
-    return data ? JSON.parse(data) : defaultGrams;
-  } catch(e) {
-    return defaultGrams;
-  }
+function saveAreas(areas) {
+  localStorage.setItem(AREA_KEY, JSON.stringify(areas));
 }
 
 function getEmergencyInfo() {
@@ -297,6 +496,18 @@ function getEmergencyInfo() {
   }
 }
 
+function saveEmergencyInfo(info) {
+  localStorage.setItem(EMERGENCY_KEY, JSON.stringify(info));
+}
+
+function getAdminPassword() {
+  return localStorage.getItem(PASS_KEY) || "admin";
+}
+
+function setAdminPassword(pass) {
+  localStorage.setItem(PASS_KEY, pass);
+}
+
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -306,46 +517,59 @@ function esc(s) {
 function init() {
   populateAreaDropdowns();
   renderPublicDonors();
+  checkSecretTrigger();
+  updateViewMode();
+
+  // Secret Logo Trigger: Click Logo 3 times within 2 seconds
+  document.getElementById('brandLogo').addEventListener('click', function() {
+    logoClickCount++;
+    clearTimeout(logoClickTimer);
+    if (logoClickCount >= 3) {
+      logoClickCount = 0;
+      openAdminModal();
+    } else {
+      logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+    }
+  });
+}
+
+function checkSecretTrigger() {
+  if (window.location.hash === '#admin') {
+    openAdminModal();
+  }
+}
+
+function updateViewMode() {
+  const landingElems = document.querySelectorAll('.landing-view');
+  const mainHeader = document.getElementById('mainHeader');
+  const mainFooter = document.getElementById('mainFooter');
+  const adminSection = document.getElementById('adminDashboardSection');
+
+  if (isAdminLoggedIn) {
+    landingElems.forEach(el => el.classList.add('hidden'));
+    if (mainFooter) mainFooter.classList.add('hidden');
+    adminSection.classList.remove('hidden');
+  } else {
+    landingElems.forEach(el => el.classList.remove('hidden'));
+    if (mainFooter) mainFooter.classList.remove('hidden');
+    adminSection.classList.add('hidden');
+  }
 }
 
 function populateAreaDropdowns() {
   const areas = getAreas();
-  
   const searchAreaSelect = document.getElementById('area');
-  searchAreaSelect.innerHTML = '<option value="">সব ইউনিয়ন</option>' + areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+  const currentSearchVal = searchAreaSelect.value;
+  searchAreaSelect.innerHTML = '<option value="">সব এলাকা</option>' + areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+  searchAreaSelect.value = currentSearchVal;
 
   const regAreaSelect = document.getElementById('regArea');
-  regAreaSelect.innerHTML = '<option value="">ইউনিয়ন নির্বাচন করুন</option>' + areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+  regAreaSelect.innerHTML = '<option value="">এলাকা নির্বাচন করুন</option>' + areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
 
-  updatePublicGramDropdown();
-  updateRegGramDropdown();
-}
+  const editAreaSelect = document.getElementById('editArea');
+  editAreaSelect.innerHTML = areas.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
 
-function updatePublicGramDropdown() {
-  const selectedUnion = document.getElementById('area').value;
-  const gramSelect = document.getElementById('gram');
-  const gramsMap = getGrams();
-
-  if (!selectedUnion) {
-    gramSelect.innerHTML = '<option value="">সব গ্রাম</option>';
-  } else {
-    const gramsList = gramsMap[selectedUnion] || ["অন্যান্য"];
-    gramSelect.innerHTML = '<option value="">সব গ্রাম</option>' + gramsList.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
-  }
-  renderPublicDonors();
-}
-
-function updateRegGramDropdown() {
-  const selectedUnion = document.getElementById('regArea').value;
-  const regGramSelect = document.getElementById('regGram');
-  const gramsMap = getGrams();
-
-  if (!selectedUnion) {
-    regGramSelect.innerHTML = '<option value="">গ্রাম নির্বাচন করুন</option>';
-  } else {
-    const gramsList = gramsMap[selectedUnion] || ["অন্যান্য"];
-    regGramSelect.innerHTML = '<option value="">গ্রাম নির্বাচন করুন</option>' + gramsList.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
-  }
+  renderAdminLocationList();
 }
 
 function openEmergencyModal() {
@@ -371,14 +595,13 @@ function renderPublicDonors() {
   const q = document.getElementById('q').value.trim().toLowerCase();
   const g = document.getElementById('group').value;
   const a = document.getElementById('area').value;
-  const gram = document.getElementById('gram').value;
 
   const approvedDonors = donors.filter(d => d.status === 'APPROVED');
+  const pendingCount = donors.filter(d => d.status === 'PENDING').length;
 
   const filtered = approvedDonors.filter(d => 
     (!g || d.blood === g) &&
     (!a || d.area === a) &&
-    (!gram || d.location === gram) &&
     (!q || (d.name + " " + d.location + " " + d.area).toLowerCase().includes(q))
   );
 
@@ -394,7 +617,7 @@ function renderPublicDonors() {
             <span class="muted">📍 ${esc(d.area)}</span>
           </div>
           <h3>${esc(d.name)}</h3>
-          <p>⌖ গ্রাম: <strong>${esc(d.location)}</strong></p>
+          <p>⌖ ${esc(d.location)}</p>
           <p class="muted">সর্বশেষ রক্তদান: ${esc(d.last || "তথ্য দেওয়া হয়নি")}</p>
         </div>
         <a class="contact" href="tel:${esc(d.phone)}">📞 কল করুন · ${esc(d.phone)}</a>
@@ -404,6 +627,13 @@ function renderPublicDonors() {
 
   document.getElementById('resultCount').textContent = filtered.length + ' জন পাওয়া গেছে';
   document.getElementById('donorCount').textContent = approvedDonors.length.toLocaleString('bn-BD');
+  
+  if (isAdminLoggedIn) {
+    document.getElementById('pendingCard').style.display = 'block';
+    document.getElementById('pendingCount').textContent = pendingCount.toLocaleString('bn-BD');
+  } else {
+    document.getElementById('pendingCard').style.display = 'none';
+  }
 }
 
 document.getElementById('donorForm').addEventListener('submit', function(e) {
@@ -426,7 +656,258 @@ document.getElementById('donorForm').addEventListener('submit', function(e) {
 
   e.target.reset();
   renderPublicDonors();
+  if (isAdminLoggedIn) renderAdminDonors();
+
   alert('আপনার নিবন্ধন তথ্য জমা দেওয়া হয়েছে! অ্যাডমিন যাচাইকরণের পর আপনার নাম রক্তদাতার তালিকায় প্রকাশিত হবে।');
+});
+
+function openAdminModal() {
+  if (isAdminLoggedIn) {
+    updateViewMode();
+  } else {
+    document.getElementById('loginModal').classList.remove('hidden');
+  }
+}
+
+function closeAdminModal() {
+  document.getElementById('loginModal').classList.add('hidden');
+}
+
+function verifyAdminLogin() {
+  const pass = document.getElementById('adminPasswordInput').value;
+  const currentPass = getAdminPassword();
+
+  if (pass === currentPass) {
+    isAdminLoggedIn = true;
+    closeAdminModal();
+    document.getElementById('adminPasswordInput').value = '';
+    updateViewMode();
+    renderAdminDonors();
+    loadEmergencyInfoIntoAdmin();
+  } else {
+    alert('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।');
+  }
+}
+
+function logoutAdmin() {
+  isAdminLoggedIn = false;
+  updateViewMode();
+  renderPublicDonors();
+}
+
+function switchAdminTab(tab) {
+  const tabs = ['donors', 'locations', 'emergency', 'security'];
+  tabs.forEach(t => {
+    const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+    const section = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.classList.remove('active');
+    if (section) section.classList.add('hidden');
+  });
+
+  const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  const activeSection = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if (activeBtn) activeBtn.classList.add('active');
+  if (activeSection) activeSection.classList.remove('hidden');
+
+  if (tab === 'emergency') loadEmergencyInfoIntoAdmin();
+}
+
+function renderAdminDonors() {
+  const donors = getDonors();
+  const filterStatus = document.getElementById('adminFilterStatus').value;
+  const tbody = document.getElementById('adminDonorTableBody');
+
+  const filtered = donors.filter(d => filterStatus === 'ALL' || d.status === filterStatus);
+
+  document.getElementById('adminStatsSummary').textContent = 
+    `মোট: ${donors.length} | অনুমোদিত: ${donors.filter(d=>d.status==='APPROVED').length} | অপেক্ষমাণ: ${donors.filter(d=>d.status==='PENDING').length}`;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">কোনো তথ্য পাওয়া যায়নি।</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(d => `
+    <tr>
+      <td><strong>${esc(d.name)}</strong></td>
+      <td><span class="blood" style="font-size:14px; padding:3px 7px;">${esc(d.blood)}</span></td>
+      <td>${esc(d.area)} <br><small class="muted">${esc(d.location)}</small></td>
+      <td><a href="tel:${esc(d.phone)}" style="color:var(--red); font-weight:bold;">${esc(d.phone)}</a></td>
+      <td>${esc(d.last)}</td>
+      <td>
+        ${d.status === 'APPROVED' 
+          ? '<span class="status-pill status-approved">✓ অনুমোদিত</span>' 
+          : '<span class="status-pill status-pending">⏳ অপেক্ষমাণ</span>'}
+      </td>
+      <td>
+        <div class="action-btns">
+          ${d.status === 'PENDING' 
+            ? `<button class="btn-green btn-sm" onclick="approveDonor('${d.id}')">অনুমোদন</button>` 
+            : `<button class="btn-secondary btn-sm" onclick="toggleStatus('${d.id}')">পেন্ডিং করুন</button>`}
+          <button class="btn-secondary btn-sm" onclick="openEditModal('${d.id}')">Edit</button>
+          <button class="btn-danger btn-sm" onclick="deleteDonor('${d.id}')">ডিলিট</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function approveDonor(id) {
+  const donors = getDonors();
+  const donor = donors.find(d => d.id === id);
+  if (donor) {
+    donor.status = 'APPROVED';
+    saveDonors(donors);
+    renderAdminDonors();
+    renderPublicDonors();
+  }
+}
+
+function toggleStatus(id) {
+  const donors = getDonors();
+  const donor = donors.find(d => d.id === id);
+  if (donor) {
+    donor.status = donor.status === 'APPROVED' ? 'PENDING' : 'APPROVED';
+    saveDonors(donors);
+    renderAdminDonors();
+    renderPublicDonors();
+  }
+}
+
+function deleteDonor(id) {
+  if (confirm('আপনি কি নিশ্চিত যে এই আবেদনটি ডিলিট করতে চান?')) {
+    let donors = getDonors();
+    donors = donors.filter(d => d.id !== id);
+    saveDonors(donors);
+    renderAdminDonors();
+    renderPublicDonors();
+  }
+}
+
+function openEditModal(id) {
+  const donors = getDonors();
+  const d = donors.find(item => item.id === id);
+  if (!d) return;
+
+  document.getElementById('editDonorId').value = d.id;
+  document.getElementById('editName').value = d.name;
+  document.getElementById('editBlood').value = d.blood;
+  document.getElementById('editArea').value = d.area;
+  document.getElementById('editLocation').value = d.location;
+  document.getElementById('editPhone').value = d.phone;
+  document.getElementById('editLast').value = d.last;
+  document.getElementById('editStatus').value = d.status;
+
+  document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.add('hidden');
+}
+
+document.getElementById('editDonorForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const id = document.getElementById('editDonorId').value;
+  const donors = getDonors();
+  const d = donors.find(item => item.id === id);
+
+  if (d) {
+    d.name = document.getElementById('editName').value;
+    d.blood = document.getElementById('editBlood').value;
+    d.area = document.getElementById('editArea').value;
+    d.location = document.getElementById('editLocation').value;
+    d.phone = document.getElementById('editPhone').value;
+    d.last = document.getElementById('editLast').value;
+    d.status = document.getElementById('editStatus').value;
+
+    saveDonors(donors);
+    closeEditModal();
+    renderAdminDonors();
+    renderPublicDonors();
+  }
+});
+
+function addNewLocation() {
+  const input = document.getElementById('newAreaInput');
+  const val = input.value.trim();
+
+  if (!val) {
+    alert('দয়া করে এলাকার নাম লিখুন');
+    return;
+  }
+
+  const areas = getAreas();
+  if (areas.includes(val)) {
+    alert('এই এলাকাটি ইতিমধ্যে তালিকায় আছে!');
+    return;
+  }
+
+  areas.push(val);
+  saveAreas(areas);
+  input.value = '';
+  populateAreaDropdowns();
+  alert('নতুন এলাকা সফলভাবে যুক্ত হয়েছে!');
+}
+
+function removeLocation(areaName) {
+  let areas = getAreas();
+  if (areas.length <= 1) {
+    alert('সর্বনিম্ন একটি এলাকা থাকা আবশ্যক!');
+    return;
+  }
+
+  if (confirm(`আপনি কি "${areaName}" এলাকাটি তালিকা থেকে সরিয়ে নিতে চান?`)) {
+    areas = areas.filter(a => a !== areaName);
+    saveAreas(areas);
+    populateAreaDropdowns();
+  }
+}
+
+function renderAdminLocationList() {
+  const areas = getAreas();
+  const ul = document.getElementById('locationList');
+  ul.innerHTML = areas.map(a => `
+    <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px;">
+      <span>📍 <strong>${esc(a)}</strong></span>
+      <button class="btn-danger btn-sm" onclick="removeLocation('${esc(a)}')">মুছে ফেলুন</button>
+    </li>
+  `).join('');
+}
+
+function loadEmergencyInfoIntoAdmin() {
+  const info = getEmergencyInfo();
+  document.getElementById('emAdminName').value = info.name || '';
+  document.getElementById('emAdminPhone').value = info.phone || '';
+  document.getElementById('emAdminLocation').value = info.location || '';
+  document.getElementById('emAdminNote').value = info.note || '';
+}
+
+document.getElementById('adminEmergencyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const updatedInfo = {
+    name: document.getElementById('emAdminName').value.trim(),
+    phone: document.getElementById('emAdminPhone').value.trim(),
+    location: document.getElementById('emAdminLocation').value.trim(),
+    note: document.getElementById('emAdminNote').value.trim()
+  };
+
+  saveEmergencyInfo(updatedInfo);
+  alert('জরুরি সহায়তা তথ্য সফলভাবে হালনাগাদ করা হয়েছে!');
+});
+
+document.getElementById('adminPasswordForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const p1 = document.getElementById('newAdminPassword').value;
+  const p2 = document.getElementById('confirmAdminPassword').value;
+
+  if (p1 !== p2) {
+    alert('পাসওয়ার্ড দুটি মেলেনি! আবার লিখুন।');
+    return;
+  }
+
+  setAdminPassword(p1);
+  alert('পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!');
+  document.getElementById('adminPasswordForm').reset();
 });
 
 init();
