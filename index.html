@@ -130,7 +130,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 
 <header id="mainHeader">
   <div class="nav">
-    <!-- Secret Trigger: Click logo 3 times to open admin login -->
     <div class="brand" id="brandLogo">Find<span>Blood</span> <small style="font-size:11px;color:#777">Dharanji</small></div>
     <nav>
       <a href="#search">রক্তদাতা খুঁজুন</a>
@@ -140,7 +139,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </header>
 
-<!-- LANDING PAGE HERO SECTION -->
 <section class="hero landing-view" id="heroSection">
   <div class="hero-inner">
     <div>
@@ -161,7 +159,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 </section>
 
 <main class="container">
-  <!-- ADMIN DASHBOARD SECTION (Shows ONLY when Admin Logged In) -->
   <section class="panel hidden" id="adminDashboardSection" style="border: 2px solid var(--red);">
     <div class="admin-header">
       <div>
@@ -178,7 +175,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
       <button class="tab-btn" id="tabBtnSecurity" onclick="switchAdminTab('security')">🔑 পাসওয়ার্ড পরিবর্তন</button>
     </div>
 
-    <!-- Admin Tab 1: Donors List & Verification -->
     <div id="tabDonors">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
         <div class="muted" id="adminStatsSummary">মোট রক্তদাতা: 0 জন</div>
@@ -203,13 +199,11 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
             </tr>
           </thead>
           <tbody id="adminDonorTableBody">
-            <!-- Dynamic Admin Donor Rows -->
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Admin Tab 2: Location Management -->
     <div id="tabLocations" class="hidden">
       <h3>নতুন এলাকা/ইউনিয়ন যোগ করুন</h3>
       <div style="display:flex; gap:10px; max-width:500px; margin-bottom:20px;">
@@ -219,11 +213,9 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 
       <h3>বিদ্যমান এলাকাসমূহ</h3>
       <ul id="locationList" style="list-style:none; padding:0; max-width:500px;">
-        <!-- Dynamic location items -->
       </ul>
     </div>
 
-    <!-- Admin Tab 3: Emergency Support Settings -->
     <div id="tabEmergency" class="hidden">
       <h3>🚨 জরুরি সহায়তা তথ্য সম্পাদনা</h3>
       <p class="muted">জরুরি সহায়তা বাটনে চাপ দিলে সাধারণ ব্যবহারকারীরা এই তথ্য দেখতে পাবেন।</p>
@@ -253,7 +245,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
       </form>
     </div>
 
-    <!-- Admin Tab 4: Password Change -->
     <div id="tabSecurity" class="hidden">
       <h3>🔑 অ্যাডমিন পাসওয়ার্ড পরিবর্তন করুন</h3>
       <p class="muted">ভবিষ্যতে লগইন করার জন্য আপনার পছন্দের নতুন পাসওয়ার্ড সেট করুন।</p>
@@ -273,9 +264,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
     </div>
   </section>
 
-  <!-- PUBLIC LANDING PAGE CONTENT CONTAINER -->
   <div id="landingViewContainer" class="landing-view">
-    <!-- PUBLIC SEARCH SECTION -->
     <section class="panel" id="search">
       <div class="section-head" style="margin-top:0">
         <div>
@@ -293,20 +282,17 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
           <option>O+</option><option>O-</option>
         </select>
         <select id="area" onchange="renderPublicDonors()">
-          <!-- Dynamic Area Options -->
         </select>
         <button onclick="renderPublicDonors()">খুঁজুন</button>
       </div>
     </section>
 
-    <!-- PUBLIC DONORS LIST -->
     <div class="section-head">
       <h2>অনুমোদিত রক্তদাতার তালিকা</h2>
       <span class="muted" id="resultCount"></span>
     </div>
     <div class="grid" id="donors"></div>
 
-    <!-- REGISTRATION FORM SECTION -->
     <section class="panel" id="register" style="margin-top:34px">
       <div class="section-head" style="margin-top:0">
         <div>
@@ -325,7 +311,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
             <option>O+</option><option>O-</option>
           </select>
           <select name="area" id="regArea" required>
-            <!-- Dynamic Area Options -->
           </select>
           <input name="location" placeholder="গ্রাম / ইউনিয়ন / বিস্তারিত এলাকা" required>
           <input name="phone" type="tel" placeholder="মোবাইল নম্বর" required>
@@ -343,7 +328,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </main>
 
-<!-- EMERGENCY SUPPORT POPUP MODAL -->
 <div id="emergencyModal" class="modal-overlay hidden">
   <div class="modal">
     <h3 style="color:var(--red); display:flex; align-items:center; gap:8px;">
@@ -365,7 +349,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </div>
 
-<!-- SECRET LOGIN MODAL -->
 <div id="loginModal" class="modal-overlay hidden">
   <div class="modal">
     <h3>🔐 অ্যাডমিন সিক্রেট প্যানেল লগইন</h3>
@@ -378,7 +361,6 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
   </div>
 </div>
 
-<!-- EDIT DONOR MODAL -->
 <div id="editModal" class="modal-overlay hidden">
   <div class="modal" style="max-width:600px;">
     <h3>✏️ রক্তদাতার তথ্য সম্পাদনা</h3>
@@ -436,15 +418,14 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 </footer>
 
 <script>
-// --- INITIAL DATA STORES ---
-const defaultDonors = [
-  { id: "1", name: "রাফি আহমেদ", blood: "O+", area: "ধরঞ্জি", location: "ধরঞ্জি বাজার", phone: "01700000001", last: "১৫ জানুয়ারি ২০২৪", status: "APPROVED" },
-  { id: "2", name: "সাব্বির হোসেন", blood: "B+", area: "জয়পুরহাট", location: "জয়পুরহাট সদর", phone: "01800000002", last: "১০ ফেব্রুয়ারি ২০২৪", status: "APPROVED" },
-  { id: "3", name: "মোঃ করিম", blood: "A+", area: "পাঁচবিবি", location: "পাঁচবিবি", phone: "01900000003", last: "তথ্য নেই", status: "PENDING" }
-];
+// ==========================================
+// AIRTABLE CONFIGURATION (Configured)
+// ==========================================
+const AIRTABLE_BASE_ID = "appq3UP1027pKjDSu"; 
+const AIRTABLE_TOKEN = "patbT7jdqsugSGfjH.783e4b87f2b44ca2907a943e65b6bbb98164d31ba2cb6ff6cd598c09b7bbdfc3";
+const AIRTABLE_TABLE_NAME = "Donors";
 
 const defaultAreas = ["ধরঞ্জি", "জয়পুরহাট", "পাঁচবিবি", "অন্যান্য"];
-
 const defaultEmergencyInfo = {
   name: "জরুরি সেবা টিম (ধরঞ্জি)",
   phone: "01711223344",
@@ -452,27 +433,14 @@ const defaultEmergencyInfo = {
   note: "জরুরি রক্ত বা কোনো তাত্ক্ষণিক সহযোগিতার প্রয়োজন হলে আমাদের হেল্পলাইন নম্বরে সরাসরি কল দিন।"
 };
 
-const DONOR_KEY = "findblood_donors_v2";
 const AREA_KEY = "findblood_areas_v2";
 const EMERGENCY_KEY = "findblood_emergency_info";
 const PASS_KEY = "findblood_admin_password";
 
+let globalDonorsList = [];
 let isAdminLoggedIn = false;
 let logoClickCount = 0;
 let logoClickTimer;
-
-function getDonors() {
-  try {
-    const data = localStorage.getItem(DONOR_KEY);
-    return data ? JSON.parse(data) : defaultDonors;
-  } catch(e) {
-    return defaultDonors;
-  }
-}
-
-function saveDonors(donors) {
-  localStorage.setItem(DONOR_KEY, JSON.stringify(donors));
-}
 
 function getAreas() {
   try {
@@ -514,13 +482,38 @@ function esc(s) {
   }[c]));
 }
 
+function fetchDonorsFromAirtable() {
+  fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
+    headers: {
+      'Authorization': `Bearer ${AIRTABLE_TOKEN}`
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.records) {
+      globalDonorsList = data.records.map(r => ({
+        id: r.id,
+        name: r.fields.Name || '',
+        blood: r.fields.Blood || '',
+        area: r.fields.Area || '',
+        location: r.fields.Location || '',
+        phone: r.fields.Phone || '',
+        last: r.fields.Last || 'তথ্য দেওয়া হয়নি',
+        status: r.fields.Status || 'PENDING'
+      }));
+      renderPublicDonors();
+      if (isAdminLoggedIn) renderAdminDonors();
+    }
+  })
+  .catch(err => console.error("Airtable data fetch error:", err));
+}
+
 function init() {
   populateAreaDropdowns();
-  renderPublicDonors();
+  fetchDonorsFromAirtable();
   checkSecretTrigger();
   updateViewMode();
 
-  // Secret Logo Trigger: Click Logo 3 times within 2 seconds
   document.getElementById('brandLogo').addEventListener('click', function() {
     logoClickCount++;
     clearTimeout(logoClickTimer);
@@ -541,7 +534,6 @@ function checkSecretTrigger() {
 
 function updateViewMode() {
   const landingElems = document.querySelectorAll('.landing-view');
-  const mainHeader = document.getElementById('mainHeader');
   const mainFooter = document.getElementById('mainFooter');
   const adminSection = document.getElementById('adminDashboardSection');
 
@@ -591,13 +583,12 @@ function closeEmergencyModal() {
 }
 
 function renderPublicDonors() {
-  const donors = getDonors();
   const q = document.getElementById('q').value.trim().toLowerCase();
   const g = document.getElementById('group').value;
   const a = document.getElementById('area').value;
 
-  const approvedDonors = donors.filter(d => d.status === 'APPROVED');
-  const pendingCount = donors.filter(d => d.status === 'PENDING').length;
+  const approvedDonors = globalDonorsList.filter(d => d.status === 'APPROVED');
+  const pendingCount = globalDonorsList.filter(d => d.status === 'PENDING').length;
 
   const filtered = approvedDonors.filter(d => 
     (!g || d.blood === g) &&
@@ -639,26 +630,36 @@ function renderPublicDonors() {
 document.getElementById('donorForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
-  const newDonor = {
-    id: Date.now().toString(),
-    name: formData.get('name'),
-    blood: formData.get('blood'),
-    area: formData.get('area'),
-    location: formData.get('location'),
-    phone: formData.get('phone'),
-    last: formData.get('last') || "তথ্য দেওয়া হয়নি",
-    status: 'PENDING'
+
+  const newRecord = {
+    fields: {
+      "Name": formData.get('name'),
+      "Blood": formData.get('blood'),
+      "Area": formData.get('area'),
+      "Location": formData.get('location'),
+      "Phone": formData.get('phone'),
+      "Last": formData.get('last') || "তথ্য দেওয়া হয়নি",
+      "Status": "PENDING"
+    }
   };
 
-  const donors = getDonors();
-  donors.push(newDonor);
-  saveDonors(donors);
-
-  e.target.reset();
-  renderPublicDonors();
-  if (isAdminLoggedIn) renderAdminDonors();
-
-  alert('আপনার নিবন্ধন তথ্য জমা দেওয়া হয়েছে! অ্যাডমিন যাচাইকরণের পর আপনার নাম রক্তদাতার তালিকায় প্রকাশিত হবে।');
+  fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newRecord)
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert('আপনার নিবন্ধন তথ্য জমা দেওয়া হয়েছে! অ্যাডমিন যাচাইকরণের পর আপনার নাম রক্তদাতার তালিকায় প্রকাশিত হবে।');
+    e.target.reset();
+    fetchDonorsFromAirtable();
+  })
+  .catch(err => {
+    alert('ডেটা পাঠাতে সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+  });
 });
 
 function openAdminModal() {
@@ -713,14 +714,13 @@ function switchAdminTab(tab) {
 }
 
 function renderAdminDonors() {
-  const donors = getDonors();
   const filterStatus = document.getElementById('adminFilterStatus').value;
   const tbody = document.getElementById('adminDonorTableBody');
 
-  const filtered = donors.filter(d => filterStatus === 'ALL' || d.status === filterStatus);
+  const filtered = globalDonorsList.filter(d => filterStatus === 'ALL' || d.status === filterStatus);
 
   document.getElementById('adminStatsSummary').textContent = 
-    `মোট: ${donors.length} | অনুমোদিত: ${donors.filter(d=>d.status==='APPROVED').length} | অপেক্ষমাণ: ${donors.filter(d=>d.status==='PENDING').length}`;
+    `মোট: ${globalDonorsList.length} | অনুমোদিত: ${globalDonorsList.filter(d=>d.status==='APPROVED').length} | অপেক্ষমাণ: ${globalDonorsList.filter(d=>d.status==='PENDING').length}`;
 
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">কোনো তথ্য পাওয়া যায়নি।</td></tr>';
@@ -753,40 +753,47 @@ function renderAdminDonors() {
 }
 
 function approveDonor(id) {
-  const donors = getDonors();
-  const donor = donors.find(d => d.id === id);
-  if (donor) {
-    donor.status = 'APPROVED';
-    saveDonors(donors);
-    renderAdminDonors();
-    renderPublicDonors();
-  }
+  updateStatusInAirtable(id, 'APPROVED');
 }
 
 function toggleStatus(id) {
-  const donors = getDonors();
-  const donor = donors.find(d => d.id === id);
-  if (donor) {
-    donor.status = donor.status === 'APPROVED' ? 'PENDING' : 'APPROVED';
-    saveDonors(donors);
-    renderAdminDonors();
-    renderPublicDonors();
+  const d = globalDonorsList.find(item => item.id === id);
+  if (d) {
+    const nextStatus = d.status === 'APPROVED' ? 'PENDING' : 'APPROVED';
+    updateStatusInAirtable(id, nextStatus);
   }
+}
+
+function updateStatusInAirtable(id, newStatus) {
+  fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      fields: { "Status": newStatus }
+    })
+  })
+  .then(res => res.json())
+  .then(() => fetchDonorsFromAirtable());
 }
 
 function deleteDonor(id) {
   if (confirm('আপনি কি নিশ্চিত যে এই আবেদনটি ডিলিট করতে চান?')) {
-    let donors = getDonors();
-    donors = donors.filter(d => d.id !== id);
-    saveDonors(donors);
-    renderAdminDonors();
-    renderPublicDonors();
+    fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_TOKEN}`
+      }
+    })
+    .then(res => res.json())
+    .then(() => fetchDonorsFromAirtable());
   }
 }
 
 function openEditModal(id) {
-  const donors = getDonors();
-  const d = donors.find(item => item.id === id);
+  const d = globalDonorsList.find(item => item.id === id);
   if (!d) return;
 
   document.getElementById('editDonorId').value = d.id;
@@ -808,23 +815,32 @@ function closeEditModal() {
 document.getElementById('editDonorForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const id = document.getElementById('editDonorId').value;
-  const donors = getDonors();
-  const d = donors.find(item => item.id === id);
+  
+  const updatedData = {
+    fields: {
+      "Name": document.getElementById('editName').value,
+      "Blood": document.getElementById('editBlood').value,
+      "Area": document.getElementById('editArea').value,
+      "Location": document.getElementById('editLocation').value,
+      "Phone": document.getElementById('editPhone').value,
+      "Last": document.getElementById('editLast').value,
+      "Status": document.getElementById('editStatus').value
+    }
+  };
 
-  if (d) {
-    d.name = document.getElementById('editName').value;
-    d.blood = document.getElementById('editBlood').value;
-    d.area = document.getElementById('editArea').value;
-    d.location = document.getElementById('editLocation').value;
-    d.phone = document.getElementById('editPhone').value;
-    d.last = document.getElementById('editLast').value;
-    d.status = document.getElementById('editStatus').value;
-
-    saveDonors(donors);
+  fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedData)
+  })
+  .then(res => res.json())
+  .then(() => {
     closeEditModal();
-    renderAdminDonors();
-    renderPublicDonors();
-  }
+    fetchDonorsFromAirtable();
+  });
 });
 
 function addNewLocation() {
