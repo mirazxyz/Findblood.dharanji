@@ -243,11 +243,11 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 <div id="emergencyModal" class="modal-overlay hidden">
   <div class="modal">
     <h3 style="color:var(--red); margin-top:0;">🚨 জরুরি রক্ত সহায়তা (Emergency)</h3>
-    <p>👤 <strong>দায়িত্বপ্রাপ্ত:</strong> জরুরি সেবা টিম (জয়পুরহাট)</p>
+    <p>👤 <strong>দায়িত্বপ্রাপ্ত:</strong> মোঃ হামিদ (জয়পুরহাট)</p>
     <p>📍 <strong>এলাকা:</strong> জয়পুরহাট জেলা</p>
     <p>📞 <strong>মোবাইল:</strong> <strong style="color:var(--red);">01903237888</strong></p>
     <div class="modal-actions">
-      <a href="tel:01711223344" style="background:var(--red); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold;">📞 কল করুন</a>
+      <a href="tel:01903237888" style="background:var(--red); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold;">📞 কল করুন</a>
       <button class="btn-secondary" onclick="closeEmergencyModal()">বন্ধ করুন</button>
     </div>
   </div>
@@ -465,7 +465,7 @@ function init() {
 
   // Union Select Dropdown Populate
   const regUnion = document.getElementById('regUnion');
-  let unionOptions = '<option value="">ইউনিয়ন নির্বাচন করুন</option>';
+  let unionOptions = '<option value="">ঠিকানা নির্বাচন করুন</option>';
   for (const [upazila, unions] of Object.entries(joypurhatData)) {
     unionOptions += `<optgroup label="${upazila} উপজেলা">`;
     unions.forEach(union => {
