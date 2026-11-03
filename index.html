@@ -18,98 +18,112 @@
   --green: #10b981;
 }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: Arial, "Noto Sans Bengali", sans-serif; color: var(--dark); background: var(--bg); }
+body { margin: 0; font-family: Arial, "Noto Sans Bengali", sans-serif; color: var(--dark); background: var(--bg); overflow-x: hidden; }
 
 /* Header & Nav */
 header { background: white; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
-.nav { max-width: 1120px; margin: auto; padding: 15px 22px; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.nav { max-width: 1120px; margin: auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .brand { cursor: pointer; user-select: none; display: flex; align-items: center; }
-.brand img { height: 45px; width: auto; object-fit: contain; }
+.brand img { height: 38px; width: auto; object-fit: contain; }
+
+/* Hamburger Menu Icon */
+.menu-toggle { display: none; background: none; border: none; font-size: 24px; color: var(--dark); cursor: pointer; padding: 4px 8px; }
+
 nav { display: flex; align-items: center; gap: 12px; }
-nav a { color: #333; text-decoration: none; font-size: 14px; font-weight: 600; }
+nav a { color: #333; text-decoration: none; font-size: 14px; font-weight: 600; white-space: nowrap; }
 nav a:hover { color: var(--red); }
-.emergency-badge-btn { background: #fee2e2; color: var(--red); padding: 8px 16px; border-radius: 20px; font-weight: 800; border: 1.5px solid var(--red); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
+.emergency-badge-btn { background: #fee2e2; color: var(--red); padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; border: 1.2px solid var(--red); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
 .emergency-badge-btn:hover { background: var(--red); color: white; }
 
 /* Status */
-.supabase-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: bold; background: #e0f2fe; color: #0369a1; }
+.supabase-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: bold; background: #e0f2fe; color: #0369a1; }
 .supabase-pill.connected { background: #dcfce7; color: #15803d; }
 .supabase-pill.error { background: #fee2e2; color: #b91c1c; }
 
 /* Hero */
-.hero { background: linear-gradient(120deg, #9e1026, #d52b45); color: white; padding: 58px 22px 70px; }
+.hero { background: linear-gradient(120deg, #9e1026, #d52b45); color: white; padding: 45px 16px 60px; }
 .hero-inner { max-width: 1120px; margin: auto; display: grid; grid-template-columns: 1.3fr .7fr; gap: 30px; align-items: center; }
-h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.15; margin: 0 0 15px; }
-.hero p { font-size: 17px; line-height: 1.7; max-width: 610px; color: #ffe9ed; }
+h1 { font-size: clamp(28px, 5vw, 48px); line-height: 1.15; margin: 0 0 12px; }
+.hero p { font-size: 15px; line-height: 1.6; max-width: 610px; color: #ffe9ed; }
 .hero-stats { display: flex; gap: 15px; }
-.hero-card { flex: 1; background: white; color: var(--dark); padding: 20px; border-radius: 18px; box-shadow: 0 15px 35px #5a071c44; text-align: center; }
-.hero-card strong { font-size: 28px; color: var(--red); display: block; }
-.hero-card small { color: var(--muted); font-weight: 600; }
+.hero-card { flex: 1; background: white; color: var(--dark); padding: 16px; border-radius: 16px; box-shadow: 0 15px 35px #5a071c44; text-align: center; }
+.hero-card strong { font-size: 24px; color: var(--red); display: block; }
+.hero-card small { color: var(--muted); font-weight: 600; font-size: 12px; }
 
 /* Layout */
-.container { max-width: 1120px; margin: 30px auto 50px; padding: 0 22px; position: relative; }
-.landing-view { margin-top: -58px; }
-.panel { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: 0 8px 25px #1720330a; margin-bottom: 25px; }
-.section-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 30px 0 16px; }
-h2 { font-size: 23px; margin: 0; }
-.muted { color: var(--muted); font-size: 14px; }
+.container { max-width: 1120px; margin: 25px auto 40px; padding: 0 16px; position: relative; }
+.landing-view { margin-top: -45px; }
+.panel { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: 0 8px 25px #1720330a; margin-bottom: 20px; }
+.section-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 25px 0 14px; }
+h2 { font-size: 20px; margin: 0; }
+.muted { color: var(--muted); font-size: 13px; }
 
 /* Form Components */
-.filters { display: grid; grid-template-columns: 1.2fr .8fr 1fr auto; gap: 12px; }
-input, select, textarea { width: 100%; padding: 12px 14px; border: 1px solid #d9dde5; border-radius: 9px; font-size: 15px; background: white; color: var(--dark); }
+.filters { display: grid; grid-template-columns: 1.2fr .8fr 1fr auto; gap: 10px; }
+input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #d9dde5; border-radius: 8px; font-size: 14px; background: white; color: var(--dark); }
 input:focus, select:focus, textarea:focus { outline: 2px solid #f3b6c0; border-color: var(--red); }
-button { border: 0; border-radius: 9px; padding: 12px 18px; background: var(--red); color: white; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+button { border: 0; border-radius: 8px; padding: 10px 16px; background: var(--red); color: white; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
 button:hover { background: var(--red-hover); }
 .btn-secondary { background: #fff; color: var(--red); border: 1px solid #e7b5bd; }
 .btn-secondary:hover { background: #fff0f2; }
 .btn-green { background: var(--green); }
-.btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
 .btn-danger { background: #ef4444; }
 
 /* Donor Slider Wrapper & Controls */
 .slider-container { position: relative; display: flex; align-items: center; width: 100%; }
-.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: white; border: 1px solid var(--line); color: var(--dark); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; font-size: 18px; transition: 0.2s; padding: 0; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: white; border: 1px solid var(--line); color: var(--dark); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; font-size: 16px; transition: 0.2s; padding: 0; }
 .slider-btn:hover { background: var(--red); color: white; border-color: var(--red); }
-.slider-btn.prev { left: -15px; }
-.slider-btn.next { right: -15px; }
+.slider-btn.prev { left: -12px; }
+.slider-btn.next { right: -12px; }
 
 /* Donor Slider Track */
-.donor-slider { display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 5px; scrollbar-width: none; }
+.donor-slider { display: flex; gap: 12px; overflow-x: auto; scroll-behavior: smooth; padding: 8px 4px; scrollbar-width: none; width: 100%; }
 .donor-slider::-webkit-scrollbar { display: none; }
 
 /* Donor Cards in Slider */
-.donor { flex: 0 0 calc(33.333% - 10px); min-width: 280px; background: white; border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-.topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.blood { background: #fff0f2; color: var(--red); font-size: 20px; font-weight: 800; border-radius: 10px; padding: 8px 12px; }
-.donor h3 { margin: 0 0 7px; font-size: 17px; }
-.donor p { margin: 5px 0; color: #555; font-size: 14px; }
-.donor .contact { display: block; margin-top: 14px; text-align: center; text-decoration: none; background: #f9e8eb; color: var(--red); padding: 11px; border-radius: 8px; font-weight: 700; }
+.donor { flex: 0 0 calc(33.333% - 8px); min-width: 260px; background: white; border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+.topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.blood { background: #fff0f2; color: var(--red); font-size: 18px; font-weight: 800; border-radius: 8px; padding: 6px 10px; }
+.donor h3 { margin: 0 0 6px; font-size: 16px; }
+.donor p { margin: 4px 0; color: #555; font-size: 13px; }
+.donor .contact { display: block; margin-top: 12px; text-align: center; text-decoration: none; background: #f9e8eb; color: var(--red); padding: 10px; border-radius: 8px; font-weight: 700; font-size: 14px; }
 .donor .contact:hover { background: var(--red); color: white; }
 
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-grid .full { grid-column: 1/-1; }
-.note { font-size: 13px; line-height: 1.6; color: #6b7280; background: #fff8e9; border: 1px solid #f3e3b8; padding: 12px; border-radius: 9px; }
-.empty { width: 100%; text-align: center; padding: 35px; color: var(--muted); background: white; border: 1px dashed #d5d9e1; border-radius: 12px; }
+.note { font-size: 12px; line-height: 1.5; color: #6b7280; background: #fff8e9; border: 1px solid #f3e3b8; padding: 10px; border-radius: 8px; }
+.empty { width: 100%; text-align: center; padding: 30px; color: var(--muted); background: white; border: 1px dashed #d5d9e1; border-radius: 10px; font-size: 14px; }
 
 /* Admin Table */
-.table-responsive { overflow-x: auto; margin-top: 15px; }
-.admin-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; min-width: 650px; }
-.admin-table th, .admin-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.table-responsive { overflow-x: auto; margin-top: 12px; }
+.admin-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 600px; }
+.admin-table th, .admin-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); }
 .admin-table th { background: #f8fafc; color: #475569; font-weight: 700; }
 
 /* Modals */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(3px); }
-.modal { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.modal { background: white; padding: 20px; border-radius: 14px; width: 90%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 
-footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px; border-top: 1px solid var(--line); background: white; }
+footer { text-align: center; color: #7a808b; padding: 24px 16px; font-size: 12px; border-top: 1px solid var(--line); background: white; }
 .hidden { display: none !important; }
 
-@media(max-width:800px){
-  .hero-inner { grid-template-columns: 1fr; }
+/* Responsive Mobile Styles */
+@media(max-width:768px){
+  .menu-toggle { display: block; }
+  .supabase-pill { display: none; }
+  
+  nav { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); margin-top: 6px; }
+  nav.open { display: flex; }
+  nav a { padding: 8px 0; border-bottom: 1px dashed var(--line); text-align: center; font-size: 15px; }
+  .emergency-badge-btn { width: 100%; margin-top: 4px; padding: 10px; font-size: 14px; }
+
+  .hero-inner { grid-template-columns: 1fr; gap: 20px; }
   .filters { grid-template-columns: 1fr 1fr; }
-  .donor { flex: 0 0 calc(50% - 8px); }
+  .donor { flex: 0 0 calc(50% - 6px); }
 }
+
 @media(max-width:540px){
   .filters, .form-grid { grid-template-columns: 1fr; }
   .donor { flex: 0 0 100%; }
@@ -120,14 +134,19 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 
 <header id="mainHeader">
   <div class="nav">
-    <div class="brand" id="brandLogo" title="অ্যাডমিন">
+    <div class="brand" id="brandLogo" title="অ্যাডমিন প্যানেলের জন্য ৩ বার ক্লিক করুন">
       <img src="logo.jpg.jpeg" alt="FindBlood Dharanji Logo">
     </div>
-    <div id="dbStatus" class="supabase-pill">⚡ Supabase কানেক্টিং...</div>
-    <nav>
-      <a href="#search">রক্তদাতা খুঁজুন</a>
-      <a href="#register">নিবন্ধন</a>
-      <button class="emergency-badge-btn" onclick="openEmergencyModal()">🚨 জরুরি সহায়তা</button>
+
+    <!-- Mobile Hamburger Toggle Button -->
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Navigation">☰</button>
+
+    <div id="dbStatus" class="supabase-pill">⚡ কানেক্টিং...</div>
+
+    <nav id="navMenu">
+      <a href="#search" onclick="closeMenu()">রক্তদাতা খুঁজুন</a>
+      <a href="#register" onclick="closeMenu()">নিবন্ধন করুন</a>
+      <button class="emergency-badge-btn" onclick="openEmergencyModal(); closeMenu();">🚨 জরুরি সহায়তা</button>
     </nav>
   </div>
 </header>
@@ -150,11 +169,11 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 <main class="container">
   <!-- ADMIN PANEL -->
   <section class="panel hidden" id="adminDashboardSection" style="border: 2px solid var(--red);">
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:15px; margin-bottom:15px;">
-      <h2 style="color:var(--red)">⚙️ অ্যাডমিন কন্ট্রোল প্যানেল</h2>
-      <div style="display:flex; gap:10px;">
-        <button class="btn-secondary btn-sm" onclick="openChangePasswordModal()">🔑 পাসওয়ার্ড পরিবর্তন</button>
-        <button class="btn-green btn-sm" onclick="fetchDonorsFromSupabase()">🔄 রিফ্রেশ ডাটা</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:12px;">
+      <h2 style="color:var(--red); font-size:18px;">⚙️ অ্যাডমিন কন্ট্রোল প্যানেল</h2>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-secondary btn-sm" onclick="openChangePasswordModal()">🔑 পাসওয়ার্ড</button>
+        <button class="btn-green btn-sm" onclick="fetchDonorsFromSupabase()">🔄 রিফ্রেশ</button>
         <button class="btn-secondary btn-sm" onclick="logoutAdmin()">লগআউট</button>
       </div>
     </div>
@@ -163,11 +182,11 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
         <thead>
           <tr>
             <th>নাম</th>
-            <th>রক্তের গ্রুপ</th>
+            <th>রক্ত</th>
             <th>উপজেলা</th>
             <th>পৌরসভা/ইউনিয়ন</th>
-            <th>মোবাইল নম্বর</th>
-            <th>সর্বশেষ রক্তদান</th>
+            <th>মোবাইল</th>
+            <th>সর্বশেষ</th>
             <th>অ্যাকশন</th>
           </tr>
         </thead>
@@ -182,13 +201,13 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
       <div class="section-head" style="margin-top:0">
         <div>
           <h2>🩸 রক্তদাতা খুঁজুন</h2>
-          <div class="muted">রক্তের গ্রুপ বা এলাকা নির্বাচন করলেই সরাসরি ম্যাচ করে তালিকা চলে আসবে</div>
+          <div class="muted">গ্রুপ বা এলাকা নির্বাচন করলেই সরাসরি তালিকা চলে আসবে</div>
         </div>
       </div>
       <div class="filters">
         <input id="q" placeholder="নাম বা এলাকা লিখুন..." oninput="renderPublicDonors()">
         <select id="group" onchange="renderPublicDonors()">
-          <option value="">সব রক্তের গ্রুপ</option>
+          <option value="">সব গ্রুপ</option>
           <option value="A+">A+</option><option value="A-">A-</option>
           <option value="B+">B+</option><option value="B-">B-</option>
           <option value="AB+">AB+</option><option value="AB-">AB-</option>
@@ -197,7 +216,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
         <select id="area" onchange="renderPublicDonors()"></select>
         <button onclick="renderPublicDonors()">খুঁজুন</button>
       </div>
-      <div id="matchNote" style="margin-top:12px; font-size:13px; color:var(--red); font-weight:bold; display:none;"></div>
+      <div id="matchNote" style="margin-top:10px; font-size:12px; color:var(--red); font-weight:bold; display:none;"></div>
     </section>
 
     <!-- DONOR LIST SLIDER -->
@@ -213,11 +232,11 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
     </div>
 
     <!-- REGISTRATION FORM -->
-    <section class="panel" id="register" style="margin-top:34px">
+    <section class="panel" id="register" style="margin-top:30px">
       <div class="section-head" style="margin-top:0">
         <div>
           <h2>রক্তদাতা হিসেবে নিবন্ধন করুন</h2>
-          <div class="muted">ইউনিয়ন নির্বাচন করলেই উপজেলা ও জেলা স্বয়ংসক্রিয়ভাবে চলে আসবে</div>
+          <div class="muted">ইউনিয়ন নির্বাচন করলেই উপজেলা স্বয়ংক্রিয়ভাবে চলে আসবে</div>
         </div>
       </div>
       <form id="donorForm">
@@ -246,8 +265,8 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
           <input name="last" class="full" placeholder="সর্বশেষ কবে রক্ত দিয়েছেন? (ঐচ্ছিক)">
           
           <div class="full note">✅ আপনার তথ্য সরাসরি লাইভ ডাটাবেজে যুক্ত হয়ে সাথে সাথে প্রদর্শিত হবে।</div>
-          <label class="full" style="font-size:14px">
-            <input type="checkbox" required style="width:auto;margin-right:8px">আমি রক্তদানে সম্মত হয়ে যোগাযোগের নম্বর প্রকাশ করার অনুমতি দিচ্ছি।
+          <label class="full" style="font-size:13px">
+            <input type="checkbox" required style="width:auto;margin-right:6px">আমি রক্তদানে সম্মত হয়ে যোগাযোগের নম্বর প্রকাশ করার অনুমতি দিচ্ছি।
           </label>
           <div class="full">
             <button type="submit" id="submitBtn">নিবন্ধন জমা দিন</button>
@@ -261,12 +280,12 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 <!-- EMERGENCY MODAL -->
 <div id="emergencyModal" class="modal-overlay hidden">
   <div class="modal">
-    <h3 style="color:var(--red); margin-top:0;">🚨 জরুরি রক্ত সহায়তা (Emergency)</h3>
-    <p>👤 <strong>দায়িত্বপ্রাপ্ত:</strong> মোঃ আঃ হামিদ (জয়পুরহাট)</p>
-    <p>📍 <strong>এলাকা:</strong> জয়পুরহাট জেলা</p>
-    <p>📞 <strong>মোবাইল:</strong> <strong style="color:var(--red);">01903237888</strong></p>
+    <h3 style="color:var(--red); margin-top:0; font-size:18px;">🚨 জরুরি রক্ত সহায়তা</h3>
+    <p style="font-size:14px;">👤 <strong>দায়িত্বপ্রাপ্ত:</strong> মোঃ আঃ হামিদ (জয়পুরহাট)</p>
+    <p style="font-size:14px;">📍 <strong>এলাকা:</strong> জয়পুরহাট জেলা</p>
+    <p style="font-size:14px;">📞 <strong>মোবাইল:</strong> <strong style="color:var(--red);">01903237888</strong></p>
     <div class="modal-actions">
-      <a href="tel:01903237888" style="background:var(--red); color:white; padding:10px 16px; border-radius:8px; text-decoration:none; font-weight:bold;">📞 কল করুন</a>
+      <a href="tel:01903237888" style="background:var(--red); color:white; padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px;">📞 কল করুন</a>
       <button class="btn-secondary" onclick="closeEmergencyModal()">বন্ধ করুন</button>
     </div>
   </div>
@@ -275,7 +294,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 <!-- ADMIN LOGIN MODAL -->
 <div id="loginModal" class="modal-overlay hidden">
   <div class="modal">
-    <h3 style="margin-top:0">🔐 অ্যাডমিন লগইন</h3>
+    <h3 style="margin-top:0; font-size:18px;">🔐 অ্যাডমিন লগইন</h3>
     <p class="muted">অ্যাডমিন পাসওয়ার্ড প্রবেশ করান</p>
     <input type="password" id="adminPasswordInput" placeholder="পাসওয়ার্ড দিন">
     <div class="modal-actions">
@@ -288,7 +307,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 <!-- CHANGE PASSWORD MODAL -->
 <div id="changePasswordModal" class="modal-overlay hidden">
   <div class="modal">
-    <h3 style="margin-top:0">🔑 পাসওয়ার্ড পরিবর্তন করুন</h3>
+    <h3 style="margin-top:0; font-size:18px;">🔑 পাসওয়ার্ড পরিবর্তন করুন</h3>
     <div style="display:flex; flex-direction:column; gap:10px;">
       <input type="password" id="oldPassInput" placeholder="বর্তমান পাসওয়ার্ড">
       <input type="password" id="newPassInput" placeholder="নতুন পাসওয়ার্ড">
@@ -296,7 +315,7 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeChangePasswordModal()">বাতিল</button>
-      <button onclick="saveNewPassword()">সংরক্ষণ করুন</button>
+      <button onclick="saveNewPassword()">সংরক্ষণ</button>
     </div>
   </div>
 </div>
@@ -324,12 +343,10 @@ let donorsList = [];
 let isAdminLoggedIn = false;
 let logoClicks = 0;
 
-// Set Default password to 'admin' if not set
 if (!localStorage.getItem('adminPassword')) {
   localStorage.setItem('adminPassword', 'admin');
 }
 
-// Blood Group Compatibility Mapping
 const bloodMatches = {
   "A+":  ["A+", "A-", "O+", "O-"],
   "A-":  ["A-", "O-"],
@@ -341,11 +358,21 @@ const bloodMatches = {
   "O-":  ["O-"]
 };
 
+// Toggle Mobile Navigation Menu
+function toggleMenu() {
+  const nav = document.getElementById('navMenu');
+  nav.classList.toggle('open');
+}
+
+function closeMenu() {
+  const nav = document.getElementById('navMenu');
+  nav.classList.remove('open');
+}
+
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 }
 
-// Fetch Donors from Supabase Database
 async function fetchDonorsFromSupabase() {
   const dbStatus = document.getElementById('dbStatus');
   try {
@@ -357,24 +384,22 @@ async function fetchDonorsFromSupabase() {
     if (error) throw error;
     donorsList = data || [];
     dbStatus.className = 'supabase-pill connected';
-    dbStatus.textContent = '● Supabase সংযুক্ত';
+    dbStatus.textContent = '● সংযুক্ত';
     renderPublicDonors();
     if (isAdminLoggedIn) renderAdminDonors();
   } catch (err) {
     console.error(err);
     dbStatus.className = 'supabase-pill error';
-    dbStatus.textContent = '⚠️ ডাটাবেজ অফলাইন';
+    dbStatus.textContent = '⚠️ অফলাইন';
   }
 }
 
-// Slider Scroll Control Function
 function scrollSlider(direction) {
   const container = document.getElementById('donors');
   const scrollAmount = container.clientWidth * 0.8;
   container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
-// Render Donors in Slider List
 function renderPublicDonors() {
   const q = document.getElementById('q').value.trim().toLowerCase();
   const selectedGroup = document.getElementById('group').value;
@@ -412,7 +437,7 @@ function renderPublicDonors() {
               <span class="blood">${esc(d.blood)}</span>
               <span class="muted">📍 ${esc(d.area)}</span>
             </div>
-            <h3>${esc(d.name)} ${isExact ? '<span style="color:var(--green);font-size:12px;">(সরাসরি ম্যাচ)</span>' : ''}</h3>
+            <h3>${esc(d.name)} ${isExact ? '<span style="color:var(--green);font-size:11px;">(সরাসরি ম্যাচ)</span>' : ''}</h3>
             <p>⌖ ${esc(d.location)}</p>
             <p class="muted">সর্বশেষ রক্তদান: ${esc(d.last_donation || "তথ্য নেই")}</p>
           </div>
@@ -426,7 +451,6 @@ function renderPublicDonors() {
   document.getElementById('donorCount').textContent = donorsList.length.toLocaleString('bn-BD');
 }
 
-// Registration Form Submit Handler
 document.getElementById('donorForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
@@ -465,7 +489,6 @@ document.getElementById('donorForm').addEventListener('submit', async function(e
   }
 });
 
-// Auto-fill Upazila based on selected Union
 function handleUnionChange() {
   const unionSelect = document.getElementById('regUnion');
   const areaInput = document.getElementById('regArea');
@@ -485,11 +508,9 @@ function handleUnionChange() {
 }
 
 function init() {
-  // Public Search Upazila Filter Options
   const searchArea = document.getElementById('area');
   searchArea.innerHTML = '<option value="">সব উপজেলা</option>' + Object.keys(joypurhatData).map(u => `<option value="${u}">${u}</option>`).join('');
 
-  // Union Select Dropdown Populate
   const regUnion = document.getElementById('regUnion');
   let unionOptions = '<option value="">ঠিকানা নির্বাচন করুন</option>';
   for (const [upazila, unions] of Object.entries(joypurhatData)) {
@@ -503,7 +524,6 @@ function init() {
 
   fetchDonorsFromSupabase();
 
-  // Open Admin Login Modal on 3 Clicks on Brand Logo
   document.getElementById('brandLogo').addEventListener('click', () => {
     logoClicks++;
     if (logoClicks >= 3) {
@@ -514,7 +534,6 @@ function init() {
   });
 }
 
-// ADMIN & MODAL FUNCTIONS
 function openAdminModal() { document.getElementById('loginModal').classList.remove('hidden'); }
 function closeAdminModal() { document.getElementById('loginModal').classList.add('hidden'); }
 function openEmergencyModal() { document.getElementById('emergencyModal').classList.remove('hidden'); }
@@ -577,7 +596,7 @@ function renderAdminDonors() {
   tbody.innerHTML = donorsList.map(d => `
     <tr>
       <td><strong>${esc(d.name)}</strong></td>
-      <td><span class="blood" style="font-size:13px;padding:3px 6px;">${esc(d.blood)}</span></td>
+      <td><span class="blood" style="font-size:12px;padding:2px 5px;">${esc(d.blood)}</span></td>
       <td>${esc(d.area)}</td>
       <td>${esc(d.location)}</td>
       <td>${esc(d.phone)}</td>
