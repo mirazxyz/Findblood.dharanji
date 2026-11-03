@@ -384,7 +384,7 @@ async function fetchDonorsFromSupabase() {
     if (error) throw error;
     donorsList = data || [];
     dbStatus.className = 'supabase-pill connected';
-    dbStatus.textContent = '● সংযুক্ত';
+    dbStatus.textContent = '●';
     renderPublicDonors();
     if (isAdminLoggedIn) renderAdminDonors();
   } catch (err) {
