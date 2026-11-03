@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#b5122b">
-<title>FindBlood |dharanji</title>
+<title>FindBlood | dharanji</title>
 <!-- Supabase JS Library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -23,8 +23,8 @@ body { margin: 0; font-family: Arial, "Noto Sans Bengali", sans-serif; color: va
 /* Header & Nav */
 header { background: white; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
 .nav { max-width: 1120px; margin: auto; padding: 15px 22px; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
-.brand { font-size: 23px; font-weight: 800; color: var(--red); letter-spacing: -.5px; cursor: pointer; user-select: none; }
-.brand span { color: #252a34; }
+.brand { cursor: pointer; user-select: none; display: flex; align-items: center; }
+.brand img { height: 45px; width: auto; object-fit: contain; }
 nav { display: flex; align-items: center; gap: 12px; }
 nav a { color: #333; text-decoration: none; font-size: 14px; font-weight: 600; }
 nav a:hover { color: var(--red); }
@@ -66,9 +66,19 @@ button:hover { background: var(--red-hover); }
 .btn-sm { padding: 6px 12px; font-size: 13px; border-radius: 6px; }
 .btn-danger { background: #ef4444; }
 
-/* Donor Cards */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-.donor { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+/* Donor Slider Wrapper & Controls */
+.slider-container { position: relative; display: flex; align-items: center; width: 100%; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: white; border: 1px solid var(--line); color: var(--dark); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; font-size: 18px; transition: 0.2s; padding: 0; }
+.slider-btn:hover { background: var(--red); color: white; border-color: var(--red); }
+.slider-btn.prev { left: -15px; }
+.slider-btn.next { right: -15px; }
+
+/* Donor Slider Track */
+.donor-slider { display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 5px; scrollbar-width: none; }
+.donor-slider::-webkit-scrollbar { display: none; }
+
+/* Donor Cards in Slider */
+.donor { flex: 0 0 calc(33.333% - 10px); min-width: 280px; background: white; border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
 .topline { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .blood { background: #fff0f2; color: var(--red); font-size: 20px; font-weight: 800; border-radius: 10px; padding: 8px 12px; }
 .donor h3 { margin: 0 0 7px; font-size: 17px; }
@@ -79,7 +89,7 @@ button:hover { background: var(--red-hover); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
 .form-grid .full { grid-column: 1/-1; }
 .note { font-size: 13px; line-height: 1.6; color: #6b7280; background: #fff8e9; border: 1px solid #f3e3b8; padding: 12px; border-radius: 9px; }
-.empty { grid-column: 1/-1; text-align: center; padding: 35px; color: var(--muted); background: white; border: 1px dashed #d5d9e1; border-radius: 12px; }
+.empty { width: 100%; text-align: center; padding: 35px; color: var(--muted); background: white; border: 1px dashed #d5d9e1; border-radius: 12px; }
 
 /* Admin Table */
 .table-responsive { overflow-x: auto; margin-top: 15px; }
@@ -98,10 +108,11 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 @media(max-width:800px){
   .hero-inner { grid-template-columns: 1fr; }
   .filters { grid-template-columns: 1fr 1fr; }
-  .grid { grid-template-columns: 1fr 1fr; }
+  .donor { flex: 0 0 calc(50% - 8px); }
 }
 @media(max-width:540px){
-  .filters, .form-grid, .grid { grid-template-columns: 1fr; }
+  .filters, .form-grid { grid-template-columns: 1fr; }
+  .donor { flex: 0 0 100%; }
 }
 </style>
 </head>
@@ -109,7 +120,9 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
 
 <header id="mainHeader">
   <div class="nav">
-    <div class="brand" id="brandLogo" title="অ্যাডমিন প্যানেলের জন্য ৩ বার ক্লিক করুন">Find<span>Blood</span> <small style="font-size:11px;color:#777">Dharanji</small></div>
+    <div class="brand" id="brandLogo" title="অ্যাডমিন">
+      <img src="logo.jpg.jpeg" alt="FindBlood Dharanji Logo">
+    </div>
     <div id="dbStatus" class="supabase-pill">⚡ Supabase কানেক্টিং...</div>
     <nav>
       <a href="#search">রক্তদাতা খুঁজুন</a>
@@ -151,7 +164,8 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
           <tr>
             <th>নাম</th>
             <th>রক্তের গ্রুপ</th>
-            <th>পৌরসভা উপজেলা ও ইউনিয়ন</th>
+            <th>উপজেলা</th>
+            <th>পৌরসভা/ইউনিয়ন</th>
             <th>মোবাইল নম্বর</th>
             <th>সর্বশেষ রক্তদান</th>
             <th>অ্যাকশন</th>
@@ -186,12 +200,17 @@ footer { text-align: center; color: #7a808b; padding: 28px 20px; font-size: 13px
       <div id="matchNote" style="margin-top:12px; font-size:13px; color:var(--red); font-weight:bold; display:none;"></div>
     </section>
 
-    <!-- DONOR LIST -->
+    <!-- DONOR LIST SLIDER -->
     <div class="section-head">
       <h2>উপলব্ধ রক্তদাতার তালিকা</h2>
       <span class="muted" id="resultCount">ডাটা লোড হচ্ছে...</span>
     </div>
-    <div class="grid" id="donors"></div>
+    
+    <div class="slider-container">
+      <button class="slider-btn prev" onclick="scrollSlider(-1)">❮</button>
+      <div class="donor-slider" id="donors"></div>
+      <button class="slider-btn next" onclick="scrollSlider(1)">❯</button>
+    </div>
 
     <!-- REGISTRATION FORM -->
     <section class="panel" id="register" style="margin-top:34px">
@@ -348,7 +367,14 @@ async function fetchDonorsFromSupabase() {
   }
 }
 
-// Render Donors in Public Search List
+// Slider Scroll Control Function
+function scrollSlider(direction) {
+  const container = document.getElementById('donors');
+  const scrollAmount = container.clientWidth * 0.8;
+  container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+
+// Render Donors in Slider List
 function renderPublicDonors() {
   const q = document.getElementById('q').value.trim().toLowerCase();
   const selectedGroup = document.getElementById('group').value;
