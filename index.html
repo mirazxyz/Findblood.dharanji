@@ -41,14 +41,24 @@ nav a:hover { color: var(--red); }
 .supabase-pill.error { background: #fee2e2; color: #b91c1c; }
 
 /* Hero */
-.hero { background: linear-gradient(120deg, #9e1026, #d52b45); color: white; padding: 45px 16px 60px; }
-.hero-inner { max-width: 1120px; margin: auto; display: grid; grid-template-columns: 1.3fr .7fr; gap: 30px; align-items: center; }
+.hero { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(120deg, #9e1026, #d52b45); color: white; padding: 45px 16px 60px; }
+.hero-background-slider { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
+.hero-background-slides { display: flex; width: 300%; height: 100%; transition: transform .8s ease-in-out; }
+.hero-background-slide { flex: 0 0 33.333333%; height: 100%; }
+.hero-background-slide img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(158,16,38,.94) 0%, rgba(181,18,43,.82) 52%, rgba(213,43,69,.68) 100%); pointer-events: none; }
+.hero-slider-dots { position: absolute; bottom: 30px; left: 0; right: 0; z-index: 3; display: flex; justify-content: center; gap: 8px; }
+.hero-slider-dots span { width: 8px; height: 8px; border-radius: 50%; background: #ffffff80; transition: all .25s; }
+.hero-slider-dots span.active { width: 23px; border-radius: 8px; background: #fff; }
+.hero-inner { position: relative; z-index: 1; max-width: 1120px; margin: auto; display: grid; grid-template-columns: 1.3fr .7fr; gap: 30px; align-items: center; }
 h1 { font-size: clamp(28px, 5vw, 48px); line-height: 1.15; margin: 0 0 12px; }
 .hero p { font-size: 15px; line-height: 1.6; max-width: 610px; color: #ffe9ed; }
 .hero-stats { display: flex; gap: 15px; }
 .hero-card { flex: 1; background: white; color: var(--dark); padding: 16px; border-radius: 16px; box-shadow: 0 15px 35px #5a071c44; text-align: center; }
 .hero-card strong { font-size: 24px; color: var(--red); display: block; }
 .hero-card small { color: var(--muted); font-weight: 600; font-size: 12px; }
+
+/* Hero image slider */
 
 /* Layout */
 .container { max-width: 1120px; margin: 25px auto 40px; padding: 0 16px; position: relative; }
@@ -134,7 +144,7 @@ footer { text-align: center; color: #7a808b; padding: 24px 16px; font-size: 12px
 
 <header id="mainHeader">
   <div class="nav">
-    <div class="brand" id="brandLogo" title="অ্যাডমিন">
+    <div class="brand" id="brandLogo" title="অ্যাডমিন প্যানেলের জন্য ৩ বার ক্লিক করুন">
       <img src="logo.jpg.jpeg" alt="FindBlood Dharanji Logo">
     </div>
 
@@ -152,6 +162,16 @@ footer { text-align: center; color: #7a808b; padding: 24px 16px; font-size: 12px
 </header>
 
 <section class="hero landing-view" id="heroSection">
+  <div class="hero-background-slider" aria-label="FindBlood banner image slider">
+    <div class="hero-background-slides" id="heroBackgroundSlides">
+      <div class="hero-background-slide"><img src="1.jpg" alt="FindBlood banner 1"></div>
+      <div class="hero-background-slide"><img src="hero2.jpg" alt="FindBlood banner 2"></div>
+      <div class="hero-background-slide"><img src="hero3.jpg" alt="FindBlood banner 3"></div>
+    </div>
+  </div>
+  <div class="hero-slider-dots" id="heroSliderDots" aria-hidden="true">
+    <span class="active"></span><span></span><span></span>
+  </div>
   <div class="hero-inner">
     <div>
       <h1>রক্তের প্রয়োজনে,<br>পাশে আছে মানুষ।</h1>
@@ -176,6 +196,15 @@ footer { text-align: center; color: #7a808b; padding: 24px 16px; font-size: 12px
         <button class="btn-green btn-sm" onclick="fetchDonorsFromSupabase()">🔄 রিফ্রেশ</button>
         <button class="btn-secondary btn-sm" onclick="logoutAdmin()">লগআউট</button>
       </div>
+    </div>
+    <div style="background:#fff7f8;border:1px solid #f3c6ce;border-radius:10px;padding:12px;margin:12px 0;">
+      <strong style="font-size:14px;color:var(--red);">🖼️ ব্যানারের ৩টি ছবি পরিবর্তন করুন</strong>
+      <p class="muted" style="margin:6px 0 10px;">একসাথে ৩টি ছবি নির্বাচন করে সংরক্ষণ করুন। ছবি ওয়েবসাইটে সেভ থাকবে।</p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="heroImageUpload" type="file" accept="image/*" multiple style="max-width:320px;">
+        <button type="button" class="btn-green btn-sm" onclick="saveHeroImages()">ছবি সংরক্ষণ</button>
+      </div>
+      <small id="heroUploadStatus" class="muted"></small>
     </div>
     <div class="table-responsive">
       <table class="admin-table">
@@ -409,20 +438,17 @@ function renderPublicDonors() {
   const filtered = donorsList.filter(d => {
     let matchGroup = true;
     if (selectedGroup) {
-      const allowed = bloodMatches[selectedGroup] || [selectedGroup];
-      matchGroup = allowed.includes(d.blood);
+      // শুধু নির্বাচিত রক্তের গ্রুপের সঙ্গেই সরাসরি মিল দেখাবে
+      matchGroup = d.blood === selectedGroup;
     }
     const matchArea = !selectedArea || d.area === selectedArea;
     const matchSearch = !q || (d.name + " " + (d.location || '') + " " + d.area + " " + d.blood).toLowerCase().includes(q);
     return matchGroup && matchArea && matchSearch;
   });
 
-  if (selectedGroup && bloodMatches[selectedGroup]) {
-    matchNote.style.display = 'block';
-    matchNote.innerHTML = `💡 <b>${selectedGroup}</b> রোগীর জন্য <u>${bloodMatches[selectedGroup].join(', ')}</u> গ্রুপের রক্তদাতারা রক্ত দিতে পারবেন।`;
-  } else {
-    matchNote.style.display = 'none';
-  }
+  // Compatibility/extra blood group suggestions বন্ধ রাখা হয়েছে
+  matchNote.style.display = 'none';
+  matchNote.textContent = '';
 
   const container = document.getElementById('donors');
   if (filtered.length === 0) {
@@ -507,7 +533,61 @@ function handleUnionChange() {
   }
 }
 
+function applySavedHeroImages() {
+  const savedImages = JSON.parse(localStorage.getItem('findbloodHeroImages') || '[]');
+  if (savedImages.length !== 3) return;
+  document.querySelectorAll('#heroBackgroundSlides img').forEach((img, index) => {
+    img.src = savedImages[index];
+  });
+}
+
+function saveHeroImages() {
+  const input = document.getElementById('heroImageUpload');
+  const status = document.getElementById('heroUploadStatus');
+  const files = Array.from(input.files || []);
+
+  if (files.length !== 3) {
+    status.textContent = 'অনুগ্রহ করে ঠিক ৩টি ছবি নির্বাচন করুন।';
+    return;
+  }
+  if (files.some(file => !file.type.startsWith('image/'))) {
+    status.textContent = 'শুধু ছবির ফাইল নির্বাচন করুন।';
+    return;
+  }
+
+  const readers = files.map(file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  }));
+
+  Promise.all(readers).then(images => {
+    localStorage.setItem('findbloodHeroImages', JSON.stringify(images));
+    applySavedHeroImages();
+    status.textContent = '৩টি ছবি সফলভাবে সংরক্ষণ হয়েছে।';
+    input.value = '';
+  }).catch(() => {
+    status.textContent = 'ছবি সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।';
+  });
+}
+
+function startHeroSlider() {
+  const slides = document.getElementById('heroBackgroundSlides');
+  const dots = document.querySelectorAll('#heroSliderDots span');
+  if (!slides || dots.length !== 3) return;
+
+  let currentSlide = 0;
+  setInterval(() => {
+    currentSlide = (currentSlide + 1) % 3;
+    slides.style.transform = `translateX(-${currentSlide * 33.333333}%)`;
+    dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+  }, 3500);
+}
+
 function init() {
+  applySavedHeroImages();
+  startHeroSlider();
   const searchArea = document.getElementById('area');
   searchArea.innerHTML = '<option value="">সব উপজেলা</option>' + Object.keys(joypurhatData).map(u => `<option value="${u}">${u}</option>`).join('');
 
